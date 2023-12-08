@@ -1,15 +1,17 @@
 import { AspectRatio, Button, Grid, Stack, Typography } from '@mui/joy';
 import { FaArrowRightLong } from 'react-icons/fa6';
 import ItemCard from '../components/ItemCard';
+import SignIn from './SignIn';
 
 export default function Home() {
   return (
     <>
-      <Hero />
+      <SignIn />
+      {/* <Hero />
       <Categories />
       <CardContainer />
       <CardContainer />
-      <CardContainer />
+      <CardContainer /> */}
     </>
   );
 }
