@@ -6,6 +6,8 @@ export default function SignIn() {
       <Typography level='h2' sx={{ fontSize: '28px' }}>
         Sign In
       </Typography>
+      <h1>samnang</h1>
     </Box>
   );
 }
+
