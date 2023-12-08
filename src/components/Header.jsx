@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Drawer, IconButton, Input, Link, List, ListItemButton, ModalClose, Stack, Typography } from '@mui/joy';
+import { Box, Button, DialogTitle, Divider, Drawer, IconButton, Input, Link, List, ListItemButton, ModalClose, Sheet, Stack, Typography } from '@mui/joy';
 import { IoMenu, IoSearchOutline } from 'react-icons/io5';
 import ModeToggle from './ModeToggle';
 
@@ -39,7 +39,7 @@ export default function Header() {
         </Stack>
       </Stack>
       <Stack direction={'row'} gap={{ xs: 1, md: 2 }}>
-        <Input
+        {/* <Input
           placeholder='Search Item'
           endDecorator={<IoSearchOutline />}
           sx={{
@@ -53,16 +53,14 @@ export default function Header() {
               outline: '1px solid',
             },
           }}
-        />
+        /> */}
+
+        <SearchDrawer />
 
         <Button sx={{ display: { xs: 'none', sm: 'inline-block' } }}>Register</Button>
         <Button sx={{ display: { xs: 'none', sm: 'inline-block' } }} color='neutral' variant='outlined'>
           Log In
         </Button>
-
-        <IconButton variant='outlined' sx={{ display: { xs: 'inline-block', lg: 'none' } }}>
-          <IoSearchOutline />
-        </IconButton>
 
         <ModeToggle />
 
@@ -105,26 +103,85 @@ function MobileDrawer() {
             gap: 2,
           }}
         >
-          <NavLink to={'/'} style={{ textDecoration: 'none' }}>
+          <NavLink to={'/'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
             <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Home</ListItemButton>
           </NavLink>
-          <NavLink to={'/browse'} style={{ textDecoration: 'none', display: 'flex', justifyContent: 'center' }}>
-            <ListItemButton>Browse</ListItemButton>
+          <NavLink to={'/browse'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
+            <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Browse</ListItemButton>
           </NavLink>
-          <NavLink to={'/about'} style={{ textDecoration: 'none', display: 'flex', justifyContent: 'center' }}>
-            <ListItemButton>About</ListItemButton>
+          <NavLink to={'/about'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
+            <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>About</ListItemButton>
           </NavLink>
-          <NavLink to={'/contact'} style={{ textDecoration: 'none', display: 'flex', justifyContent: 'center' }}>
-            <ListItemButton>Contact</ListItemButton>
+          <NavLink to={'/contact'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
+            <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Contact</ListItemButton>
           </NavLink>
           <Divider />
-          <NavLink to={'/login'} style={{ textDecoration: 'none', display: 'flex', justifyContent: 'center' }}>
-            <ListItemButton>Login</ListItemButton>
+          <NavLink to={'/login'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
+            <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Login</ListItemButton>
           </NavLink>
-          <NavLink to={'/register'} style={{ textDecoration: 'none', display: 'flex', justifyContent: 'center' }}>
-            <ListItemButton>Register</ListItemButton>
+          <NavLink to={'/register'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
+            <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Register</ListItemButton>
           </NavLink>
         </List>
+      </Drawer>
+    </>
+  );
+}
+
+function SearchDrawer() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <IconButton variant='outlined' onClick={() => setOpen(true)}>
+        <IoSearchOutline />
+      </IconButton>
+      <Drawer
+        size='lg'
+        variant='plain'
+        anchor='top'
+        open={open}
+        onClose={() => setOpen(false)}
+        slotProps={{
+          content: {
+            sx: {
+              height: '100vh',
+              bgcolor: 'transparent',
+              p: { md: 3, sm: 0 },
+              boxShadow: 'none',
+            },
+          },
+        }}
+      >
+        <Sheet
+          sx={{
+            borderRadius: 'md',
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            height: '100%',
+            overflow: 'auto',
+          }}
+        >
+          <DialogTitle>Search</DialogTitle>
+          <ModalClose />
+
+          <Input
+            placeholder='Search Item'
+            endDecorator={<IoSearchOutline />}
+            sx={{
+              // display: { xs: 'none', lg: 'flex' },
+              maxWidth: 500,
+              boxShadow: 'none',
+              '&::before': {
+                display: 'none',
+              },
+              '&:focus-within': {
+                outline: '1px solid',
+              },
+            }}
+          />
+        </Sheet>
       </Drawer>
     </>
   );

@@ -1,6 +1,7 @@
 import { AspectRatio, Grid, Button, Stack, Typography } from '@mui/joy';
 import { FaArrowRightLong } from 'react-icons/fa6';
 import ItemCard from '../components/ItemCard';
+import { Link } from 'react-router-dom';
 
 export default function Home() {
   return (
@@ -26,9 +27,11 @@ function Hero() {
       </Typography>
       <Stack direction={{ xs: 'column', md: 'row' }} gap={5} mt={5}>
         <Button size='lg'>Join Us</Button>
-        <Button variant='plain' size='lg' color='neutral'>
-          <Typography mr={2}>Browse More</Typography> <FaArrowRightLong />
-        </Button>
+        <Link to={'/browse'}>
+          <Button variant='plain' size='lg' color='neutral'>
+            <Typography mr={2}>Browse More</Typography> <FaArrowRightLong />
+          </Button>
+        </Link>
       </Stack>
     </Stack>
   );
@@ -71,7 +74,7 @@ function Categories() {
   return (
     <Stack py={5}>
       <Stack>
-        <Typography level='h2' fontWeight={400}>
+        <Typography level='h2' fontWeight={400} fontSize={{ xs: '20px', md: '28px' }}>
           Our Top Categories
         </Typography>
       </Stack>
@@ -115,12 +118,15 @@ function Categories() {
 function CardContainer() {
   return (
     <Stack py={5}>
-      <Stack direction={'row'} justifyContent={'space-between'}>
-        <Typography level='h2' fontWeight={400}>
+      <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
+        <Typography level='h2' fontWeight={400} fontSize={{ xs: '20px', md: '28px' }}>
           Popular Bidding
         </Typography>
         <Button variant='plain' size='lg' color='neutral'>
-          <Typography mr={2}>See More</Typography> <FaArrowRightLong />
+          <Typography mr={{ xs: 1, sm: 2 }} fontSize={{ xs: '10px', sm: '14px', md: '18px' }}>
+            See More
+          </Typography>{' '}
+          <FaArrowRightLong />
         </Button>
       </Stack>
       <Grid container spacing={2} mt={2}>
