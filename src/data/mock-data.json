@@ -1,0 +1,460 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "sellerName": "Sery Vathana",
+      "sellerProfileImg": "https://images.pexels.com/photos/1490844/pexels-photo-1490844.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "itemName": "Tank",
+      "itemCategories": [
+        "Vehicle"
+      ],
+      "itemDetail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "itemImgURL": [
+        "https://images.pexels.com/photos/163546/radpanzer-model-military-vehicle-163546.jpeg?auto=compress&cs=tinysrgb&w=800"
+      ],
+      "location": [
+        "Siem Reap",
+        "Siem Reap",
+        "Cambodia"
+      ],
+      "startDate": "2023-11-21T17:00:00.000Z",
+      "endDate": "2023-12-30T17:00:00.000Z",
+      "initialPrice": 3000,
+      "bidIncrement": 100,
+      "biddingHistory": [
+        {
+          "id": 1,
+          "bidder": "John",
+          "bidPrice": 130,
+          "bidDate": "2023-12-01T17:00:00.000Z"
+        },
+        {
+          "id": 2,
+          "bidder": "Gaymer",
+          "bidPrice": 180,
+          "bidDate": "2023-12-03T17:00:00.000Z"
+        },
+        {
+          "id": 3,
+          "bidder": "NoobMaster",
+          "bidPrice": 120,
+          "bidDate": "2023-12-05T17:00:00.000Z"
+        },
+        {
+          "id": 4,
+          "bidder": "Chicken Nugget",
+          "bidPrice": 100,
+          "bidDate": "2023-12-07T17:00:00.000Z"
+        },
+        {
+          "id": 1702139031235,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:23:51.235Z"
+        },
+        {
+          "id": 5,
+          "bidder": "Johnny",
+          "bidPrice": 190,
+          "bidDate": "2023-12-01T17:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "sellerName": "Rin Samnang",
+      "sellerProfileImg": "https://images.pexels.com/photos/1490844/pexels-photo-1490844.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      "itemName": "Tank",
+      "itemCategories": [
+        "Vehicle"
+      ],
+      "itemDetail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "itemImgURL": [
+        "https://images.pexels.com/photos/163546/radpanzer-model-military-vehicle-163546.jpeg?auto=compress&cs=tinysrgb&w=800"
+      ],
+      "location": [
+        "Siem Reap",
+        "Siem Reap",
+        "Cambodia"
+      ],
+      "startDate": "2023-11-21T17:00:00.000Z",
+      "endDate": "2023-12-30T17:00:00.000Z",
+      "initialPrice": 3000,
+      "bidIncrement": 100,
+      "biddingHistory": [
+        {
+          "id": 1,
+          "bidder": "John",
+          "bidPrice": 130,
+          "bidDate": "2023-12-01T17:00:00.000Z"
+        },
+        {
+          "id": 2,
+          "bidder": "Gaymer",
+          "bidPrice": 180,
+          "bidDate": "2023-12-03T17:00:00.000Z"
+        },
+        {
+          "id": 3,
+          "bidder": "NoobMaster",
+          "bidPrice": 120,
+          "bidDate": "2023-12-05T17:00:00.000Z"
+        },
+        {
+          "id": 4,
+          "bidder": "Chicken Nugget",
+          "bidPrice": 100,
+          "bidDate": "2023-12-07T17:00:00.000Z"
+        },
+        {
+          "id": 1702139031235,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:23:51.235Z"
+        },
+        {
+          "id": 1702139277987,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:27:57.987Z"
+        },
+        {
+          "id": 1702139279776,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:27:59.776Z"
+        },
+        {
+          "id": 1702139327771,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:28:47.771Z"
+        },
+        {
+          "id": 1702139328826,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:28:48.826Z"
+        },
+        {
+          "id": 1702139369923,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:29:29.923Z"
+        },
+        {
+          "id": 1702139386996,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:29:46.996Z"
+        },
+        {
+          "id": 1702139396755,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:29:56.755Z"
+        },
+        {
+          "id": 1702139398940,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:29:58.940Z"
+        },
+        {
+          "id": 1702139402630,
+          "bidder": "John",
+          "bidPrice": "10120",
+          "bidDate": "2023-12-09T16:30:02.630Z"
+        },
+        {
+          "id": 1702139409047,
+          "bidder": "John",
+          "bidPrice": "10120",
+          "bidDate": "2023-12-09T16:30:09.047Z"
+        },
+        {
+          "id": 1702139454704,
+          "bidder": "John",
+          "bidPrice": 1002,
+          "bidDate": "2023-12-09T16:30:54.704Z"
+        },
+        {
+          "id": 1702139494232,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:34.232Z"
+        },
+        {
+          "id": 1702139494829,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:34.829Z"
+        },
+        {
+          "id": 1702139495262,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:35.262Z"
+        },
+        {
+          "id": 1702139495437,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:35.437Z"
+        },
+        {
+          "id": 1702139495596,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:35.596Z"
+        },
+        {
+          "id": 1702139495765,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:35.765Z"
+        },
+        {
+          "id": 1702139495957,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:35.957Z"
+        },
+        {
+          "id": 1702139496125,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:36.125Z"
+        },
+        {
+          "id": 1702139496309,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:36.309Z"
+        },
+        {
+          "id": 1702139508158,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:48.158Z"
+        },
+        {
+          "id": 1702139509094,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:49.094Z"
+        },
+        {
+          "id": 1702139511032,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:31:51.032Z"
+        },
+        {
+          "id": 1702139521295,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:32:01.295Z"
+        },
+        {
+          "id": 1702139521615,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:32:01.615Z"
+        },
+        {
+          "id": 1702139688338,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:34:48.338Z"
+        },
+        {
+          "id": 1702139688482,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:34:48.482Z"
+        },
+        {
+          "id": 1702139688651,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:34:48.651Z"
+        },
+        {
+          "id": 1702139688794,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:34:48.794Z"
+        },
+        {
+          "id": 1702139688938,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:34:48.938Z"
+        },
+        {
+          "id": 1702139689113,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:34:49.113Z"
+        },
+        {
+          "id": 1702139689282,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:34:49.282Z"
+        },
+        {
+          "id": 1702139689450,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:34:49.450Z"
+        },
+        {
+          "id": 1702139689618,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:34:49.618Z"
+        },
+        {
+          "id": 1702139689785,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:34:49.785Z"
+        },
+        {
+          "id": 1702139972121,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:39:32.121Z"
+        },
+        {
+          "id": 1702139972880,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:39:32.880Z"
+        },
+        {
+          "id": 1702140099555,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:41:39.555Z"
+        },
+        {
+          "id": 1702140100451,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:41:40.451Z"
+        },
+        {
+          "id": 1702140109846,
+          "bidder": "John",
+          "bidPrice": 101,
+          "bidDate": "2023-12-09T16:41:49.846Z"
+        },
+        {
+          "id": 1702140191846,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:43:11.846Z"
+        },
+        {
+          "id": 1702140193767,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:43:13.767Z"
+        },
+        {
+          "id": 1702140195000,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:43:15.000Z"
+        },
+        {
+          "id": 1702140213487,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:43:33.487Z"
+        },
+        {
+          "id": 1702140216241,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:43:36.241Z"
+        },
+        {
+          "id": 1702140216613,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:43:36.613Z"
+        },
+        {
+          "id": 1702140385582,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:46:25.582Z"
+        },
+        {
+          "id": 1702140550475,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:49:10.475Z"
+        },
+        {
+          "id": 1702140553619,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:49:13.619Z"
+        },
+        {
+          "id": 1702140553812,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:49:13.812Z"
+        },
+        {
+          "id": 1702140554075,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:49:14.075Z"
+        },
+        {
+          "id": 1702140577147,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:49:37.147Z"
+        },
+        {
+          "id": 1702140577860,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:49:37.860Z"
+        },
+        {
+          "id": 1702140578388,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:49:38.388Z"
+        },
+        {
+          "id": 1702140578684,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:49:38.684Z"
+        },
+        {
+          "id": 1702140578996,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:49:38.996Z"
+        },
+        {
+          "id": 1702140579195,
+          "bidder": "John",
+          "bidPrice": 100,
+          "bidDate": "2023-12-09T16:49:39.195Z"
+        }
+      ]
+    }
+  ]
+}

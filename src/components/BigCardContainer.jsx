@@ -7,7 +7,7 @@ export default function BigCardContainer({ currentItems }) {
     <Grid container spacing={2} mt={1}>
       {currentItems?.map((item) => {
         return (
-          <Grid xs={12 / 1} sm={12 / 2} md={12 / 3} lg={12 / 4} xl={12 / 5} key={Math.random() * Date.now() + Math.random()} sx={{ cursor: 'pointer' }}>
+          <Grid xs={12 / 1} sm={12 / 2} md={12 / 3} lg={12 / 4} xl={12 / 5} key={item.id} sx={{ cursor: 'pointer' }}>
             <ItemCard item={item} />
           </Grid>
         );

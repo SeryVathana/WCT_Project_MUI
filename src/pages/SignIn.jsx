@@ -1,11 +1,15 @@
-import { Box, Typography } from '@mui/joy';
+import { Grid, Stack, Typography } from '@mui/joy';
 
 export default function SignIn() {
   return (
-    <Box sx={{ color: 'red', marginTop: '100px' }}>
-      <Typography level='h2' sx={{ fontSize: '28px' }}>
-        Sign In
-      </Typography>
-    </Box>
+    <Grid container columns={3} sx={{ marginTop: '100px' }}>
+      <Grid xs={2}>
+        <Stack justifyContent={'center'} alignItems={'center'}>
+          <Typography level='h1'>Welcome Back</Typography>
+          <Typography level='h3'>Sign In</Typography>
+        </Stack>
+      </Grid>
+      <Grid xs={1}></Grid>
+    </Grid>
   );
 }

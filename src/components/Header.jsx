@@ -72,8 +72,10 @@ export default function Header() {
   );
 }
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import axios from 'axios';
+import BigCardContainer from './BigCardContainer';
 
 function MobileDrawer() {
   const [open, setOpen] = useState(false);
@@ -130,6 +132,36 @@ function MobileDrawer() {
 
 function SearchDrawer() {
   const [open, setOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+
+  const [data, setData] = useState([]);
+  const [backUpData, setBackUpData] = useState([]);
+
+  const fetchData = async () => {
+    await axios
+      .get('http://localhost:3000/items')
+      .then((res) => {
+        // setData(res.data);
+        setBackUpData(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  function handleSearchItem(value) {
+    setSearchValue(value);
+    if (value !== '' && value.length >= 3) {
+      const searchResult = backUpData?.filter((item) => item.itemName.toLowerCase().includes(value));
+      setData(searchResult);
+    }
+    if (value == '') {
+      setData([]);
+    }
+  }
+
   return (
     <>
       <IconButton variant='outlined' onClick={() => setOpen(true)}>
@@ -165,9 +197,10 @@ function SearchDrawer() {
         >
           <DialogTitle>Search</DialogTitle>
           <ModalClose />
-
           <Input
             placeholder='Search Item'
+            value={searchValue}
+            onChange={(e) => handleSearchItem(e.target.value)}
             endDecorator={<IoSearchOutline />}
             sx={{
               // display: { xs: 'none', lg: 'flex' },
@@ -181,6 +214,7 @@ function SearchDrawer() {
               },
             }}
           />
+          <BigCardContainer currentItems={data} />
         </Sheet>
       </Drawer>
     </>

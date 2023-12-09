@@ -3,13 +3,15 @@ import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import Browse from './pages/Browse';
 import Item from './pages/Item';
+import SignIn from './pages/SignIn';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<MainLayout />}>
       <Route index element={<Home />} />
       <Route path='/browse' element={<Browse />} />
-      <Route path='/item' element={<Item />} />
+      <Route path='/item/:id' element={<Item />} />
+      <Route path='/signin' element={<SignIn />} />
     </Route>
   )
 );
