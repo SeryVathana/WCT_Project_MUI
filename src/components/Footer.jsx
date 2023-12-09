@@ -110,7 +110,7 @@ function LinkContainer({ title = 'Untitled', data }) {
         <Stack gap={1}>
           {data.map((link) => {
             return (
-              <Link key={link.title} color='neutral' href={link.url}>
+              <Link key={Math.random() * Math.random() + Math.random()} color='neutral' href={link.url}>
                 {link.title}
               </Link>
             );

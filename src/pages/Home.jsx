@@ -81,7 +81,7 @@ function Categories() {
       <Grid container spacing={2} mt={2}>
         {CategoryList.map((category) => {
           return (
-            <Grid xs={12 / 2} sm={12 / 3} md={12 / 4} lg={12 / 6} key={category.title}>
+            <Grid xs={12 / 2} sm={12 / 3} md={12 / 4} lg={12 / 6} key={Math.random() * Math.random() + Math.random()}>
               <AspectRatio
                 objectFit='cover'
                 variant='outlined'
