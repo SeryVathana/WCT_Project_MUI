@@ -2,14 +2,19 @@ import { AspectRatio, Avatar, Box, Button, Input, Sheet, Stack, Table, Typograph
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 function Item() {
+  const user = useSelector((state) => state.user.value);
+
   const param = useParams();
 
   const [data, setData] = useState([]);
   const [activeImg, setActiveImg] = useState('');
   const [biddingValue, setBiddingValue] = useState(0);
+
+  const [lastBidder, setLastBidder] = useState();
 
   let currentPrice = data.initialPrice;
 
@@ -25,11 +30,15 @@ function Item() {
           setData(res.data);
           setActiveImg(res.data.itemImgURL[0]);
           setBiddingValue(res.data.bidIncrement);
+          setLastBidder(res.data.biddingHistory[res.data.biddingHistory.length - 1]);
+          // console.log(res.data.biddingHistory[res.data.biddingHistory.length - 1].id);
+          // console.log(user.userId);
         })
         .catch((err) => console.log(err));
     };
 
     fetchData();
+    window.scrollTo(0, 0);
   }, [param.id]);
 
   function BidPrice(data, value) {
@@ -38,8 +47,8 @@ function Item() {
     }
 
     data.biddingHistory.push({
-      id: Date.now(),
-      bidder: 'John',
+      id: user.userId,
+      bidder: user.userName,
       bidPrice: Number(value),
       bidDate: new Date(Date.now()),
     });
@@ -48,10 +57,15 @@ function Item() {
       .put(`http://localhost:3000/items/${data.id}`, data)
       .then((res) => {
         setData(res.data);
-        console.log(res.data);
+        setLastBidder(res.data.biddingHistory[res.data.biddingHistory.length - 1]);
       })
       .catch((err) => console.log(err));
   }
+
+  const dateFormat = (date) => {
+    const unformatDate = new Date(date);
+    return unformatDate.getDate() + ' ' + unformatDate.toLocaleString('default', { month: 'short' }) + ' ' + unformatDate.getFullYear();
+  };
 
   return (
     <Box display={'grid'} gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={5} mt={5}>
@@ -89,11 +103,11 @@ function Item() {
             <tbody>
               <tr>
                 <td style={{ width: '30%' }}>Start Date</td>
-                <td>{data.startDate}</td>
+                <td>{dateFormat(data.startDate)}</td>
               </tr>
               <tr>
                 <td style={{ width: '30%' }}>End Date</td>
-                <td>{data.endDate}</td>
+                <td>{dateFormat(data.endDate)}</td>
               </tr>
               <tr>
                 <td style={{ width: '30%' }}>Remaining Day</td>
@@ -119,16 +133,18 @@ function Item() {
               </tr>
               <tr>
                 <td style={{ width: '30%' }}>Your Last Bid</td>
-                <td>$ 0</td>
+                <td>$ {lastBidder?.id === user.userId && lastBidder.bidPrice}</td>
               </tr>
             </tbody>
           </Table>
         </Sheet>
+
         <Stack direction={'row'} mt={3} gap={1}>
           <Input
             placeholder='Enter Bidding Price'
             size='lg'
             type='number'
+            disabled={lastBidder?.id === user.userId}
             value={biddingValue}
             slotProps={{
               input: {
@@ -140,8 +156,10 @@ function Item() {
             startDecorator={'$'}
             sx={{ boxShadow: 'none', width: { xs: '200px', sm: '300px' } }}
           />
+
           <Button
             type='submit'
+            disabled={lastBidder?.id === user.userId}
             onClick={(e) => {
               e.preventDefault();
               BidPrice(data, biddingValue, setData);
@@ -150,6 +168,11 @@ function Item() {
             Place Bid
           </Button>
         </Stack>
+        {lastBidder?.id === user.userId && (
+          <Typography color='warning' level='body-sm'>
+            Your are the last bidder, you cannot bid again.
+          </Typography>
+        )}
       </Stack>
       <Stack gap={2}>
         <Typography level='title-lg'>Bidding History</Typography>
@@ -164,10 +187,10 @@ function Item() {
             </thead>
             <tbody>
               {data.biddingHistory?.map((row) => (
-                <tr key={row.id}>
+                <tr key={row.id * Math.random()}>
                   <td>{row.bidder}</td>
                   <td>$ {row.bidPrice}</td>
-                  <td>{row.bidDate}</td>
+                  <td>{dateFormat(row.bidDate) + ' - ' + new Date(row.bidDate).toLocaleTimeString()}</td>
                 </tr>
               ))}
             </tbody>

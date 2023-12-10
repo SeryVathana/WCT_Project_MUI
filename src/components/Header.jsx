@@ -1,6 +1,17 @@
-import { Box, Button, DialogTitle, Divider, Drawer, IconButton, Input, Link, List, ListItemButton, ModalClose, Sheet, Stack, Typography } from '@mui/joy';
-import { IoMenu, IoSearchOutline } from 'react-icons/io5';
+import { Avatar, Box, Button, DialogTitle, Divider, Drawer, Dropdown, IconButton, Input, Link, List, Typography, Menu, MenuButton, MenuItem, ModalClose, Sheet, Stack } from '@mui/joy';
 import ModeToggle from './ModeToggle';
+
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import BigCardContainer from './BigCardContainer';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { switchLogin } from '../redux/actions/loginSlice';
+
+import { FiUser } from 'react-icons/fi';
+import { IoMenu, IoSearchOutline, IoSettingsOutline } from 'react-icons/io5';
+import { MdLogout } from 'react-icons/md';
 
 const navLinks = [
   {
@@ -22,47 +33,78 @@ const navLinks = [
 ];
 
 export default function Header() {
+  const isLoggedIn = useSelector((state) => state.login.value);
+  const user = useSelector((state) => state.user.value);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   return (
     <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} sx={{ position: 'relative', top: '0', pt: 3, pb: 1, zIndex: 10, overflow: 'hidden' }}>
       <Stack direction='row' gap={10}>
         <Typography level='h4' color='primary'>
           Auctionaire
         </Typography>
-        <Stack direction='row' gap={5} sx={{ display: { xs: 'none', md: 'flex' } }}>
+        <Stack direction='row' alignItems={'center'} gap={5} sx={{ display: { xs: 'none', md: 'flex' } }}>
           {navLinks.map((link) => {
             return (
-              <Link component={'a'} key={link.title} href={link.url} color='neutral' underline='none' sx={{ '&:hover': { color: 'primary.500' } }}>
-                {link.title}
-              </Link>
+              <NavLink key={link.title} to={link.url} style={{ textDecoration: 'none' }}>
+                <Typography color='neutral' sx={{ '&:hover': { color: 'primary.500' } }}>
+                  {link.title}
+                </Typography>
+              </NavLink>
             );
           })}
         </Stack>
       </Stack>
       <Stack direction={'row'} gap={{ xs: 1, md: 2 }}>
-        {/* <Input
-          placeholder='Search Item'
-          endDecorator={<IoSearchOutline />}
-          sx={{
-            display: { xs: 'none', lg: 'flex' },
-
-            boxShadow: 'none',
-            '&::before': {
-              display: 'none',
-            },
-            '&:focus-within': {
-              outline: '1px solid',
-            },
-          }}
-        /> */}
-
         <SearchDrawer />
 
-        <Button sx={{ display: { xs: 'none', sm: 'inline-block' } }}>Register</Button>
-        <Button sx={{ display: { xs: 'none', sm: 'inline-block' } }} color='neutral' variant='outlined'>
-          Log In
-        </Button>
+        {!isLoggedIn && (
+          <>
+            <Button sx={{ display: { xs: 'none', sm: 'inline-block' } }}>Register</Button>
+            <Button sx={{ display: { xs: 'none', sm: 'inline-block' } }} color='neutral' variant='outlined' onClick={() => dispatch(switchLogin())}>
+              Log In
+            </Button>
+          </>
+        )}
 
         <ModeToggle />
+
+        {isLoggedIn && (
+          <Box sx={{ display: { xs: 'none', md: 'inline-block' } }}>
+            <Dropdown>
+              <MenuButton variant='plain' sx={{ padding: '0 10px' }}>
+                <Stack direction={'row'} alignItems={'center'} gap={2}>
+                  <Avatar size='sm' src={user.userPfp} />
+                  <Typography level='title-sm'>{user.userName}</Typography>
+                </Stack>
+              </MenuButton>
+              <Menu>
+                <MenuItem>
+                  <NavLink to={'/dashboard'}>
+                    <Link color='neutral' underline='none' sx={{ '&:hover': { color: 'primary.500' } }}>
+                      <FiUser />
+                      <Typography>Dashboard</Typography>
+                    </Link>
+                  </NavLink>
+                </MenuItem>
+                <MenuItem disabled>
+                  <IoSettingsOutline />
+                  <Typography>Setting</Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    dispatch(switchLogin());
+                    navigate('/');
+                  }}
+                >
+                  <MdLogout />
+                  <Typography>Log Out</Typography>
+                </MenuItem>
+              </Menu>
+            </Dropdown>
+          </Box>
+        )}
 
         <Box sx={{ display: { xs: 'inline-block', md: 'none' } }}>
           <MobileDrawer />
@@ -72,13 +114,11 @@ export default function Header() {
   );
 }
 
-import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import axios from 'axios';
-import BigCardContainer from './BigCardContainer';
-
 function MobileDrawer() {
   const [open, setOpen] = useState(false);
+  const isLoggedIn = useSelector((state) => state.login.value);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   return (
     <>
       <IconButton variant='outlined' color='neutral' onClick={() => setOpen(true)}>
@@ -106,24 +146,56 @@ function MobileDrawer() {
           }}
         >
           <NavLink to={'/'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-            <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Home</ListItemButton>
+            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Home</Typography>
           </NavLink>
           <NavLink to={'/browse'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-            <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Browse</ListItemButton>
+            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Browse</Typography>
           </NavLink>
           <NavLink to={'/about'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-            <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>About</ListItemButton>
+            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>About</Typography>
           </NavLink>
           <NavLink to={'/contact'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-            <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Contact</ListItemButton>
+            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Contact</Typography>
           </NavLink>
           <Divider />
-          <NavLink to={'/login'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-            <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Login</ListItemButton>
-          </NavLink>
-          <NavLink to={'/register'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-            <ListItemButton sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Register</ListItemButton>
-          </NavLink>
+          {!isLoggedIn ? (
+            <>
+              {/* <NavLink to={'/login'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}> */}
+              <Typography
+                onClick={() => {
+                  setOpen(false);
+                  dispatch(switchLogin());
+                  navigate('/');
+                }}
+                sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}
+              >
+                Log In
+              </Typography>
+              {/* </NavLink> */}
+              <NavLink to={'/register'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
+                <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Register</Typography>
+              </NavLink>
+            </>
+          ) : (
+            <>
+              <NavLink to={'/login'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
+                <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Dashboard</Typography>
+              </NavLink>
+              <NavLink to={'/login'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
+                <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Setting</Typography>
+              </NavLink>
+
+              <Typography
+                onClick={() => {
+                  setOpen(false);
+                  dispatch(switchLogin());
+                }}
+                sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}
+              >
+                Log Out
+              </Typography>
+            </>
+          )}
         </List>
       </Drawer>
     </>

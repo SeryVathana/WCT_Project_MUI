@@ -76,6 +76,7 @@ export default function Browse() {
 
   useEffect(() => {
     fetchData();
+    window.scrollTo(0, 0);
   }, []);
 
   return (
