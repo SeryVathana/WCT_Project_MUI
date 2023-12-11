@@ -27,9 +27,38 @@ import TabList from '@mui/joy/TabList';
 import Tabs from '@mui/joy/Tabs';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 import { useSelector } from 'react-redux';
+import { Timestamp, addDoc, deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
+
+import { db } from '../firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
 
 function Dashboard() {
   const user = useSelector((state) => state.user.value);
+  const dataCollectionRef = collection(db, 'posts');
+
+  const [posts, setPosts] = useState([]);
+
+  // const fetchPostData = async () => {
+  //   await axios
+  //     .get('http://localhost:3000/items')
+  //     .then((res) => {
+  //       setPosts(res.data);
+  //       console.log()
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
+
+  useEffect(() => {
+    const fetchPostData = async () => {
+      await getDocs(dataCollectionRef).then((resData) => {
+        setPosts(resData.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
+        console.log('Fetched Data from firebase.');
+      });
+    };
+
+    fetchPostData();
+  }, []);
+
   return (
     <Stack mt={3}>
       <Tabs aria-label='Basic tabs' defaultValue={0} variant={'outlined'} sx={{ borderRadius: 'md' }}>
@@ -55,7 +84,7 @@ function Dashboard() {
         </TabPanel>
         {user.userRole === 'Admin' && (
           <TabPanel value={2}>
-            <PendingPosts />
+            <Posts data={posts} />
           </TabPanel>
         )}
         <TabPanel value={3}>
@@ -66,20 +95,7 @@ function Dashboard() {
   );
 }
 
-const PendingPosts = () => {
-  const [data, setData] = useState([]);
-
-  const fetchData = async () => {
-    await axios
-      .get('http://localhost:3000/items')
-      .then((res) => setData(res.data))
-      .catch((err) => console.log(err));
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
+const Posts = ({ data }) => {
   return (
     <Grid container spacing={2}>
       <Grid xs={8}>
@@ -88,7 +104,7 @@ const PendingPosts = () => {
             <Typography level='title-lg'>Posts</Typography>
             <AccordionGroup sx={{ borderRadius: 'none' }}>
               {data.map((item) => {
-                return <ItemList key={item.id} item={item} />;
+                return <ItemList key={item.id} data={item} />;
               })}
             </AccordionGroup>
           </Stack>
@@ -129,12 +145,40 @@ const PendingPosts = () => {
   );
 };
 
-const ItemList = ({ item }) => {
+const ItemList = ({ data }) => {
+  const [item, setItem] = useState(data);
   const [activeImg, setActiveImg] = useState(item.itemImgURL[0]);
+  const curDocRef = doc(db, 'posts', item.id);
+  const newDocRef = doc(db, 'items', item.id);
 
   const dateFormat = (date) => {
-    const unformatDate = new Date(date);
-    return unformatDate.getDate() + ' ' + unformatDate.toLocaleString('default', { month: 'short' }) + ' ' + unformatDate.getFullYear();
+    return new Date(date?.seconds * 1000).toLocaleString();
+  };
+
+  const AcceptPost = async () => {
+    const newData = {
+      ...item,
+      postStatus: 'accepted',
+    };
+
+    await updateDoc(curDocRef, newData).then(() => {
+      setItem(newData);
+      setDoc(newDocRef, newData);
+      console.log('Update Data');
+    });
+  };
+
+  const RejectPost = async () => {
+    const newData = {
+      ...item,
+      postStatus: 'pending',
+    };
+
+    await updateDoc(curDocRef, newData).then(() => {
+      setItem(newData);
+      deleteDoc(doc(db, 'items', item.id));
+      console.log('Update Data');
+    });
   };
 
   return (
@@ -142,16 +186,16 @@ const ItemList = ({ item }) => {
       <AccordionSummary>
         <Stack direction={'row'} gap={2} alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
           <Stack direction={'row'} gap={2} alignItems={'center'}>
-            <AspectRatio ratio={4 / 3} sx={{ minWidth: '50px', borderRadius: 'xs' }}>
+            <AspectRatio ratio={4 / 3} sx={{ minWidth: '100px', borderRadius: 'xs' }}>
               <img src={item.itemImgURL[0]} alt='' />
             </AspectRatio>
             <Stack>
               <Typography level='title-lg'>{item.itemName}</Typography>
-              <Typography level='body-sm'>By: {item.sellerName}</Typography>
+              <Typography level='body-sm'>{item.sellerName}</Typography>
             </Stack>
           </Stack>
           <Typography level='body-sm'>{dateFormat(item.startDate)}</Typography>
-          <Chip color='warning'>Pending</Chip>
+          {item.postStatus == 'pending' ? <Chip color='warning'>Pending</Chip> : <Chip color='success'>Accepted</Chip>}
         </Stack>
       </AccordionSummary>
       <AccordionDetails sx={{ mt: 2 }}>
@@ -204,8 +248,12 @@ const ItemList = ({ item }) => {
               </Table>
             </Sheet>
             <Stack direction={'row'} gap={2} mt={3}>
-              <Button>Approve</Button>
-              <Button color='danger'>Reject</Button>
+              <Button disabled={item.postStatus === 'accepted'} onClick={() => AcceptPost()}>
+                Approve
+              </Button>
+              <Button disabled={item.postStatus === 'pending'} onClick={() => RejectPost()} color='danger'>
+                Reject
+              </Button>
             </Stack>
           </Grid>
 
@@ -232,7 +280,16 @@ const ItemList = ({ item }) => {
 };
 
 const CreatePostTab = () => {
-  const [text, setText] = useState('');
+  const [itemName, setItemName] = useState('');
+  const [description, setDescription] = useState('');
+  const [district, setDistrict] = useState('');
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [initialPrice, setInitialPrice] = useState('');
+  const [bidIncrement, setBidIncrement] = useState('');
+
   return (
     <Stack gap={2} mt={2} width={'30%'}>
       <Typography level='h2'>Create Post</Typography>
@@ -240,7 +297,7 @@ const CreatePostTab = () => {
         <Stack direction={'column'} gap={3}>
           <Box>
             <FormLabel>Item Name</FormLabel>
-            <Input placeholder='Enter Item Name' required sx={{ boxShadow: 'none' }} />
+            <Input value={itemName} onChange={(e) => setItemName(e.target.value)} placeholder='Enter Item Name' required sx={{ boxShadow: 'none' }} />
           </Box>
           <Box>
             <FormLabel>Item Description</FormLabel>
@@ -248,14 +305,13 @@ const CreatePostTab = () => {
               placeholder='Enter Item Description'
               minRows={2}
               required
-              value={text}
-              inputProps={{ maxLength: 12 }}
+              value={description}
               onChange={(event) => {
-                setText(event.target.value);
+                setDescription(event.target.value);
               }}
               endDecorator={
                 <Typography level='body-xs' sx={{ ml: 'auto' }}>
-                  {120 - text.length} character(s) left
+                  {120 - description.length} character(s) left
                 </Typography>
               }
               sx={{ boxShadow: 'none' }}
@@ -267,47 +323,38 @@ const CreatePostTab = () => {
           <Stack direction={'row'} gap={2}>
             <Typography>Location</Typography>
             <Stack gap={1}>
-              <Input placeholder='Enter District' required sx={{ boxShadow: 'none' }} />
-              <Input placeholder='Enter City' required sx={{ boxShadow: 'none' }} />
-              <Input placeholder='Enter Country' required sx={{ boxShadow: 'none' }} />
+              <Input value={district} onChange={(e) => setDistrict(e.target.value)} placeholder='Enter District' required sx={{ boxShadow: 'none' }} />
+              <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder='Enter City' required sx={{ boxShadow: 'none' }} />
+              <Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder='Enter Country' required sx={{ boxShadow: 'none' }} />
             </Stack>
           </Stack>
           <Box>
             <FormLabel>End Date</FormLabel>
             <Stack direction={'row'} gap={1}>
               <Input
+                // value={}
+                onChange={(e) => console.log(new Date(e.target.value))}
                 type='date'
                 slotProps={{
                   input: {
-                    // min: '2018-06-07',
-                    // max: '2018-06-14',
+                    min: new Date(Date.now()).toISOString().replace(/T.*/, '').split('-').join('-'),
                   },
                 }}
                 required
                 sx={{ boxShadow: 'none', flexGrow: 1 }}
               />
-              <Input
-                type='time'
-                slotProps={{
-                  input: {
-                    // min: '2018-06-07',
-                    // max: '2018-06-14',
-                  },
-                }}
-                required
-                sx={{ boxShadow: 'none' }}
-              />
+              {/* <Input type='time' onChange={(e) => console.log(e.target.value)} required sx={{ boxShadow: 'none' }} /> */}
             </Stack>
           </Box>
 
           <Box>
             <FormLabel>Initial Price</FormLabel>
-            <Input startDecorator={'$'} placeholder='Enter Initial Price' type='number' required sx={{ boxShadow: 'none' }} />
+            <Input value={initialPrice} onChange={(e) => setInitialPrice(e.target.value)} startDecorator={'$'} placeholder='Enter Initial Price' type='number' required sx={{ boxShadow: 'none' }} />
           </Box>
 
           <Box>
             <FormLabel>Increment Amount</FormLabel>
-            <Input startDecorator={'$'} placeholder='Enter Bid Increment' type='number' required sx={{ boxShadow: 'none' }} />
+            <Input value={bidIncrement} onChange={(e) => setBidIncrement(e.target.value)} startDecorator={'$'} placeholder='Enter Bid Increment' type='number' required sx={{ boxShadow: 'none' }} />
           </Box>
 
           <Button type='submit' sx={{ width: 'fit-content' }}>

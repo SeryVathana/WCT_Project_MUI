@@ -81,16 +81,24 @@ export default function Header() {
               </MenuButton>
               <Menu>
                 <MenuItem>
-                  <NavLink to={'/dashboard'}>
-                    <Link color='neutral' underline='none' sx={{ '&:hover': { color: 'primary.500' } }}>
-                      <FiUser />
+                  <NavLink to={'/dashboard'} style={{ textDecoration: 'none' }}>
+                    <Stack direction={'row'} alignItems={'center'} gap={1} color='neutral' underline='none'>
+                      <Typography mb={0.5}>
+                        <FiUser />
+                      </Typography>
                       <Typography>Dashboard</Typography>
-                    </Link>
+                    </Stack>
                   </NavLink>
                 </MenuItem>
                 <MenuItem disabled>
-                  <IoSettingsOutline />
-                  <Typography>Setting</Typography>
+                  <NavLink to={'/dashboard'} style={{ textDecoration: 'none' }}>
+                    <Stack direction={'row'} alignItems={'center'} gap={1} color='neutral' underline='none'>
+                      <Typography mb={0.5}>
+                        <IoSettingsOutline />
+                      </Typography>
+                      <Typography>Setting</Typography>
+                    </Stack>
+                  </NavLink>
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
@@ -98,8 +106,14 @@ export default function Header() {
                     navigate('/');
                   }}
                 >
-                  <MdLogout />
-                  <Typography>Log Out</Typography>
+                  <NavLink to={'/dashboard'} style={{ textDecoration: 'none' }}>
+                    <Stack direction={'row'} alignItems={'center'} gap={1} color='neutral' underline='none'>
+                      <Typography mb={0.5}>
+                        <MdLogout />
+                      </Typography>
+                      <Typography>Log Out</Typography>
+                    </Stack>
+                  </NavLink>
                 </MenuItem>
               </Menu>
             </Dropdown>
@@ -209,24 +223,10 @@ function SearchDrawer() {
   const [data, setData] = useState([]);
   const [backUpData, setBackUpData] = useState([]);
 
-  const fetchData = async () => {
-    await axios
-      .get('http://localhost:3000/items')
-      .then((res) => {
-        // setData(res.data);
-        setBackUpData(res.data);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   function handleSearchItem(value) {
     setSearchValue(value);
     if (value !== '' && value.length >= 3) {
-      const searchResult = backUpData?.filter((item) => item.itemName.toLowerCase().includes(value));
+      const searchResult = backUpData?.filter((item) => item.itemName.toLowerCase().includes(value.toLowerCase()));
       setData(searchResult);
     }
     if (value == '') {

@@ -5,6 +5,7 @@ import Browse from './pages/Browse';
 import Item from './pages/Item';
 import SignIn from './pages/SignIn';
 import Dashboard from './pages/Dashboard';
+import UploadImgTest from './tests/UploadImgTest';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -14,6 +15,7 @@ const router = createBrowserRouter(
       <Route path='/item/:id' element={<Item />} />
       <Route path='/signin' element={<SignIn />} />
       <Route path='/dashboard' element={<Dashboard />} />
+      <Route path='/test' element={<UploadImgTest />} />
     </Route>
   )
 );

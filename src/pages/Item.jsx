@@ -1,5 +1,8 @@
 import { AspectRatio, Avatar, Box, Button, Input, Sheet, Stack, Table, Typography } from '@mui/joy';
-import axios from 'axios';
+
+import { Timestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+
 import { useEffect, useState } from 'react';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 import { useSelector } from 'react-redux';
@@ -7,64 +10,57 @@ import { useParams } from 'react-router-dom';
 
 function Item() {
   const user = useSelector((state) => state.user.value);
-
   const param = useParams();
+  const docRef = doc(db, 'items', param.id);
 
   const [data, setData] = useState([]);
   const [activeImg, setActiveImg] = useState('');
   const [biddingValue, setBiddingValue] = useState(0);
-
   const [lastBidder, setLastBidder] = useState();
 
   let currentPrice = data.initialPrice;
-
   data.biddingHistory?.map((data) => {
     currentPrice += Number(data.bidPrice);
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      await axios
-        .get(`http://localhost:3000/items/${param.id}`)
-        .then((res) => {
-          setData(res.data);
-          setActiveImg(res.data.itemImgURL[0]);
-          setBiddingValue(res.data.bidIncrement);
-          setLastBidder(res.data.biddingHistory[res.data.biddingHistory.length - 1]);
-          // console.log(res.data.biddingHistory[res.data.biddingHistory.length - 1].id);
-          // console.log(user.userId);
-        })
-        .catch((err) => console.log(err));
+    const getData = async () => {
+      const docSnap = await getDoc(docRef);
+      setData({ ...docSnap.data(), id: docSnap.id });
+      setActiveImg(docSnap.data().itemImgURL[0]);
+      setBiddingValue(docSnap.data().bidIncrement);
+      setLastBidder(docSnap.data()?.biddingHistory[docSnap.data().biddingHistory?.length - 1]);
     };
 
-    fetchData();
-    window.scrollTo(0, 0);
-  }, [param.id]);
+    getData();
+  }, []);
 
-  function BidPrice(data, value) {
-    if (value < data.bidIncrement) {
+  const BidPrice = async () => {
+    if (biddingValue < data.bidIncrement) {
       return;
     }
 
-    data.biddingHistory.push({
-      id: user.userId,
-      bidder: user.userName,
-      bidPrice: Number(value),
-      bidDate: new Date(Date.now()),
-    });
+    const newData = {
+      ...data,
+      biddingHistory: [
+        ...data.biddingHistory,
+        {
+          bidderID: user.userId,
+          bidderName: user.userName,
+          bidPrice: Number(biddingValue),
+          bidDate: new Timestamp(Math.floor(Date.now() / 1000), Date.now() / 1000000),
+        },
+      ],
+    };
 
-    axios
-      .put(`http://localhost:3000/items/${data.id}`, data)
-      .then((res) => {
-        setData(res.data);
-        setLastBidder(res.data.biddingHistory[res.data.biddingHistory.length - 1]);
-      })
-      .catch((err) => console.log(err));
-  }
+    await updateDoc(docRef, newData).then(() => {
+      setData(newData);
+      console.log('Value of an Existing Document Field has been updated');
+    });
+  };
 
   const dateFormat = (date) => {
-    const unformatDate = new Date(date);
-    return unformatDate.getDate() + ' ' + unformatDate.toLocaleString('default', { month: 'short' }) + ' ' + unformatDate.getFullYear();
+    return new Date(date?.seconds * 1000).toLocaleString();
   };
 
   return (
@@ -144,7 +140,7 @@ function Item() {
             placeholder='Enter Bidding Price'
             size='lg'
             type='number'
-            disabled={lastBidder?.id === user.userId}
+            disabled={lastBidder?.bidderID === user.userId}
             value={biddingValue}
             slotProps={{
               input: {
@@ -159,16 +155,16 @@ function Item() {
 
           <Button
             type='submit'
-            disabled={lastBidder?.id === user.userId}
+            disabled={lastBidder?.bidderID === user.userId}
             onClick={(e) => {
               e.preventDefault();
-              BidPrice(data, biddingValue, setData);
+              BidPrice(data);
             }}
           >
             Place Bid
           </Button>
         </Stack>
-        {lastBidder?.id === user.userId && (
+        {lastBidder?.bidderID === user.userId && (
           <Typography color='warning' level='body-sm'>
             Your are the last bidder, you cannot bid again.
           </Typography>
@@ -187,10 +183,10 @@ function Item() {
             </thead>
             <tbody>
               {data.biddingHistory?.map((row) => (
-                <tr key={row.id * Math.random()}>
-                  <td>{row.bidder}</td>
+                <tr key={Math.random()}>
+                  <td>{row.bidderName}</td>
                   <td>$ {row.bidPrice}</td>
-                  <td>{dateFormat(row.bidDate) + ' - ' + new Date(row.bidDate).toLocaleTimeString()}</td>
+                  <td>{dateFormat(row.bidDate)}</td>
                 </tr>
               ))}
             </tbody>

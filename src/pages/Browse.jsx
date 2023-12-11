@@ -1,4 +1,4 @@
-import axios from 'axios';
+// import axios from 'axios';
 
 /* eslint-disable react/prop-types */
 import { Button, FormControl, FormLabel, IconButton, Option, Select, Stack, Typography } from '@mui/joy';
@@ -6,6 +6,9 @@ import { useEffect, useState } from 'react';
 import BigCardContainer from '../components/BigCardContainer';
 
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
+
+import { db } from '../firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
 
 const categories = [
   'Default',
@@ -36,19 +39,9 @@ const categories = [
 export default function Browse() {
   const [data, setData] = useState([]);
   const [backUpData, setBackUpData] = useState([]);
-
   const [categoryValue, setCategoryValue] = useState(categories[0]);
 
-  function handleChangeCategories(inputCategory) {
-    setCategoryValue(inputCategory);
-
-    if (inputCategory !== 'Default') {
-      const filterdData = backUpData.filter((item) => item?.itemCategories?.includes(inputCategory));
-      setData(filterdData);
-    } else {
-      setData(backUpData);
-    }
-  }
+  const dataCollectionRef = collection(db, 'items');
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
@@ -60,24 +53,41 @@ export default function Browse() {
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
-  const fetchData = async () => {
-    await axios
-      .get('http://localhost:3000/items')
-      .then((res) => {
-        setData(res.data);
-        setBackUpData(res.data);
-      })
-      .catch((err) => console.log(err));
-  };
+  // const fetchData = async () => {
+  //   await axios
+  //     .get('http://localhost:3000/items')
+  //     .then((res) => {
+  //       setData(res.data);
+  //       setBackUpData(res.data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
+
+  useEffect(() => {
+    const getData = async () => {
+      const resData = await getDocs(dataCollectionRef);
+      setData(resData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setBackUpData(resData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+
+    getData();
+    window.scrollTo(0, 0);
+  }, []);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  useEffect(() => {
-    fetchData();
-    window.scrollTo(0, 0);
-  }, []);
+  const handleChangeCategories = (inputCategory) => {
+    setCategoryValue(inputCategory);
+
+    if (inputCategory !== 'Default') {
+      const filterdData = backUpData.filter((item) => item?.itemCategories?.includes(inputCategory));
+      setData(filterdData);
+    } else {
+      setData(backUpData);
+    }
+  };
 
   return (
     <Stack mt={5}>

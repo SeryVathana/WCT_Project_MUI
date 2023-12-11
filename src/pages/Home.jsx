@@ -1,31 +1,30 @@
 /* eslint-disable react/prop-types */
 import { Button, Grid, Stack, Typography } from '@mui/joy';
-import axios from 'axios';
+// import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { FaArrowRightLong } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
 import ItemCard from '../components/ItemCard';
 
-// console.log(JSON.stringify(new Date('11-22-2023 UTC+7')));
+import { db } from '../firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function Home() {
   const [data, setData] = useState([]);
-
-  const fetchData = async () => {
-    await axios
-      .get('http://localhost:3000/items')
-      .then((res) => setData(res.data))
-      .catch((err) => console.log(err));
-  };
+  const dataCollectionRef = collection(db, 'items');
 
   useEffect(() => {
-    fetchData();
+    const getData = async () => {
+      const resData = await getDocs(dataCollectionRef);
+      setData(resData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+
+    getData();
   }, []);
 
   return (
     <>
       <Hero />
-      {/* <Categories /> */}
       <CardContainer items={data} />
     </>
   );
@@ -52,84 +51,6 @@ function Hero() {
     </Stack>
   );
 }
-
-// const CategoryList = [
-//   {
-//     title: 'Example 1',
-//     bgImg: 'https://images.unsplash.com/photo-1701485559943-9c62773358db?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHx8',
-//     url: '#',
-//   },
-//   {
-//     title: 'Example 1',
-//     bgImg: 'https://images.unsplash.com/photo-1701485559943-9c62773358db?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHx8',
-//     url: '#',
-//   },
-//   {
-//     title: 'Example 1',
-//     bgImg: 'https://images.unsplash.com/photo-1701485559943-9c62773358db?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHx8',
-//     url: '#',
-//   },
-//   {
-//     title: 'Example 1',
-//     bgImg: 'https://images.unsplash.com/photo-1701485559943-9c62773358db?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHx8',
-//     url: '#',
-//   },
-//   {
-//     title: 'Example 1',
-//     bgImg: 'https://images.unsplash.com/photo-1701485559943-9c62773358db?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHx8',
-//     url: '#',
-//   },
-//   {
-//     title: 'Example 1',
-//     bgImg: 'https://images.unsplash.com/photo-1701485559943-9c62773358db?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHx8',
-//     url: '#',
-//   },
-// ];
-
-// function Categories() {
-//   return (
-//     <Stack py={5}>
-//       <Stack>
-//         <Typography level='h2' fontWeight={400} fontSize={{ xs: '20px', md: '28px' }}>
-//           Our Top Categories
-//         </Typography>
-//       </Stack>
-//       <Grid container spacing={2} mt={2}>
-//         {CategoryList.map((category) => {
-//           return (
-//             <Grid xs={12 / 2} sm={12 / 3} md={12 / 4} lg={12 / 6} key={Math.random() * Math.random() + Math.random()}>
-//               <AspectRatio
-//                 objectFit='cover'
-//                 variant='outlined'
-//                 ratio='1/1'
-//                 sx={{
-//                   position: 'relative',
-//                   width: '100%',
-//                   bgcolor: 'background.level2',
-//                   borderRadius: 'lg',
-
-//                   '&:hover': {
-//                     '& img': { scale: '1.2' },
-//                   },
-//                 }}
-//               >
-//                 <img src={category.bgImg} alt={category.title} style={{ transition: 'all 0.2s linear' }} />
-//                 <Typography
-//                   level='h3'
-//                   textTransform={'uppercase'}
-//                   letterSpacing={1}
-//                   sx={{ color: 'neutral.50', position: 'absolute', left: '50%', top: 20, translate: '-50% 0%', width: '100%', textAlign: 'center' }}
-//                 >
-//                   {category.title}
-//                 </Typography>
-//               </AspectRatio>
-//             </Grid>
-//           );
-//         })}
-//       </Grid>
-//     </Stack>
-//   );
-// }
 
 function CardContainer({ items }) {
   return (
