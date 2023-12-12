@@ -1,8 +1,7 @@
-import { Avatar, Box, Button, DialogTitle, Divider, Drawer, Dropdown, IconButton, Input, Link, List, Typography, Menu, MenuButton, MenuItem, ModalClose, Sheet, Stack } from '@mui/joy';
+import { Avatar, Box, Button, DialogTitle, Divider, Drawer, Dropdown, IconButton, Input, List, Menu, MenuButton, MenuItem, ModalClose, Sheet, Stack, Typography } from '@mui/joy';
 import ModeToggle from './ModeToggle';
 
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import BigCardContainer from './BigCardContainer';
 
@@ -71,7 +70,7 @@ export default function Header() {
         <ModeToggle />
 
         {isLoggedIn && (
-          <Box sx={{ display: { xs: 'none', md: 'inline-block' } }}>
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <Dropdown>
               <MenuButton variant='plain' sx={{ padding: '0 10px' }}>
                 <Stack direction={'row'} alignItems={'center'} gap={2}>
@@ -216,18 +215,35 @@ function MobileDrawer() {
   );
 }
 
+import { db } from '../firebaseConfig';
+
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+
 function SearchDrawer() {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const colRef = collection(db, 'items');
 
   const [data, setData] = useState([]);
-  const [backUpData, setBackUpData] = useState([]);
+  // const [backUpData, setBackUpData] = useState([]);
 
   function handleSearchItem(value) {
     setSearchValue(value);
+    // console.log(value);
+    const q = query(colRef, where('itemName', '>=', value.toLowerCase()), where('itemName', '<=', '~'));
+    const q1 = query(colRef, where('itemName', '>=', value.toUpperCase()), where('itemName', '<=', '~'));
     if (value !== '' && value.length >= 3) {
-      const searchResult = backUpData?.filter((item) => item.itemName.toLowerCase().includes(value.toLowerCase()));
-      setData(searchResult);
+      onSnapshot(q, (snapshot) => {
+        setData(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // setBackUpData(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
+      });
+      onSnapshot(q1, (snapshot) => {
+        setData(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // setBackUpData(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
+      });
+
+      // const searchResult = backUpData?.filter((item) => item.itemName.toLowerCase().includes(value.toLowerCase()));
+      // setData(searchResult);
     }
     if (value == '') {
       setData([]);

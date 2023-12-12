@@ -18,7 +18,7 @@ function Item() {
   const [biddingValue, setBiddingValue] = useState(0);
   const [lastBidder, setLastBidder] = useState();
 
-  let currentPrice = data.initialPrice;
+  let currentPrice = Number(data.initialPrice);
   data.biddingHistory?.map((data) => {
     currentPrice += Number(data.bidPrice);
   });
@@ -55,6 +55,7 @@ function Item() {
 
     await updateDoc(docRef, newData).then(() => {
       setData(newData);
+      setLastBidder(newData?.biddingHistory[newData.biddingHistory?.length - 1]);
       console.log('Value of an Existing Document Field has been updated');
     });
   };
@@ -66,7 +67,7 @@ function Item() {
   return (
     <Box display={'grid'} gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={5} mt={5}>
       <Stack gap={1}>
-        <AspectRatio ratio={16 / 9} sx={{ borderRadius: 'lg' }}>
+        <AspectRatio ratio={16 / 9} objectFit='contain' sx={{ borderRadius: 'lg' }}>
           <img src={activeImg} alt='' />
         </AspectRatio>
         <Stack direction={'row'} gap={1} overflow={'auto'}>
@@ -124,7 +125,7 @@ function Item() {
               <tr>
                 <td style={{ width: '30%' }}>Current Price</td>
                 <td>
-                  <Typography level='title-lg'>$ {currentPrice}</Typography>
+                  <Typography level='title-lg'>$ {Number(currentPrice).toLocaleString()}</Typography>
                 </td>
               </tr>
               <tr>
@@ -185,7 +186,7 @@ function Item() {
               {data.biddingHistory?.map((row) => (
                 <tr key={Math.random()}>
                   <td>{row.bidderName}</td>
-                  <td>$ {row.bidPrice}</td>
+                  <td>$ {Number(row.bidPrice).toLocaleString()}</td>
                   <td>{dateFormat(row.bidDate)}</td>
                 </tr>
               ))}
@@ -193,7 +194,7 @@ function Item() {
             <tfoot>
               <tr>
                 <td>Total: {data.biddingHistory?.length} Bidders</td>
-                <td>$ {currentPrice}</td>
+                <td>$ {Number(currentPrice).toLocaleString()}</td>
                 <td></td>
               </tr>
             </tfoot>

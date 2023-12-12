@@ -4,7 +4,7 @@ import { BsBookmark } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
 export default function ItemCard({ item }) {
-  let currentPrice = item.initialPrice;
+  let currentPrice = Number(item.initialPrice);
 
   item.biddingHistory.map((data) => {
     currentPrice += Number(data.bidPrice);
@@ -44,7 +44,9 @@ export default function ItemCard({ item }) {
             {item.location.join(' | ')}
           </Typography>
           <Typography level='body-sm'>Bid Increment: ${item.bidIncrement}</Typography>
-          <Typography level='body-md'>Current: ${currentPrice}</Typography>
+          <Typography level='body-md' sx={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 1, overflow: 'hidden' }}>
+            Current: ${Number(currentPrice).toLocaleString()}
+          </Typography>
           <Stack direction={{ xs: 'column-reverse', sm: 'row' }} justifyContent={'space-between'} alignItems={{ xs: 'start', sm: 'center' }} gap={1} mt={{ xs: 0, sm: 1 }}>
             <Link to={`/item/${item.id}`}>
               <Button variant='outlined' color='neutral' size='md'>

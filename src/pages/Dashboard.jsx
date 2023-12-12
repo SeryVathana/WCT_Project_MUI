@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 import {
@@ -11,11 +10,14 @@ import {
   Avatar,
   Box,
   Button,
+  Card,
   Chip,
   FormLabel,
   Grid,
+  IconButton,
   Input,
   Sheet,
+  Snackbar,
   Stack,
   TabPanel,
   Table,
@@ -25,12 +27,24 @@ import {
 import Tab from '@mui/joy/Tab';
 import TabList from '@mui/joy/TabList';
 import Tabs from '@mui/joy/Tabs';
-import { IoIosCheckmarkCircle } from 'react-icons/io';
-import { useSelector } from 'react-redux';
 import { Timestamp, addDoc, deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { IoIosCheckmarkCircle, IoMdClose } from 'react-icons/io';
+import { FaCheck } from 'react-icons/fa6';
 
+import { useSelector } from 'react-redux';
+
+import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
+
+import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { FiTrash } from 'react-icons/fi';
+import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
+import { IoMdTime } from 'react-icons/io';
+
+import { v4 } from 'uuid';
+import { storeDB } from '../firebaseConfig';
+
+import Autocomplete from '@mui/joy/Autocomplete';
 
 function Dashboard() {
   const user = useSelector((state) => state.user.value);
@@ -38,42 +52,31 @@ function Dashboard() {
 
   const [posts, setPosts] = useState([]);
 
-  // const fetchPostData = async () => {
-  //   await axios
-  //     .get('http://localhost:3000/items')
-  //     .then((res) => {
-  //       setPosts(res.data);
-  //       console.log()
-  //     })
-  //     .catch((err) => console.log(err));
-  // };
-
   useEffect(() => {
-    const fetchPostData = async () => {
-      await getDocs(dataCollectionRef).then((resData) => {
-        setPosts(resData.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
-        console.log('Fetched Data from firebase.');
-      });
-    };
-
-    fetchPostData();
+    onSnapshot(dataCollectionRef, (snapshot) => {
+      setPosts(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
+    });
   }, []);
 
   return (
     <Stack mt={3}>
       <Tabs aria-label='Basic tabs' defaultValue={0} variant={'outlined'} sx={{ borderRadius: 'md' }}>
         <TabList>
-          <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} width={'100%'} paddingX={2} pt={2}>
-            <Stack direction={'row'} alignItems={'end'} gap={5}>
-              <Typography level='h2'>Dashboard</Typography>
-              <Stack direction={'row'}>
-                <Tab>Create Post</Tab>
+          <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} width={'100%'} paddingX={{ xs: 0, md: 2 }} pt={2}>
+            <Stack direction={{ xs: 'column', md: 'row' }} flexGrow={{ xs: 1, md: 0 }} justifyContent={'space-between'} alignItems={{ xs: 'center', md: 'end' }} gap={{ xs: 2, sm: 3, md: 4, lg: 5 }}>
+              <Typography level='h2' fontSize={{ xs: 18, sm: 20, md: 22, lg: 24 }}>
+                Dashboard
+              </Typography>
+              <Stack direction={'row'} fontSize={{ xs: 12, sm: 16 }}>
+                <Tab sx={{ textAlign: 'center' }}>Create Post</Tab>
                 <Tab>Profile</Tab>
                 {user.userRole === 'Admin' && <Tab>Posts</Tab>}
                 <Tab>Activities</Tab>
               </Stack>
             </Stack>
-            <Typography level='body-md'>Role: {user.userRole}</Typography>
+            <Typography level='body-md' sx={{ display: { xs: 'none', md: 'block' } }}>
+              Role: {user.userRole}
+            </Typography>
           </Stack>
         </TabList>
         <TabPanel value={0}>
@@ -83,7 +86,7 @@ function Dashboard() {
           <b>Profile</b> tab panel
         </TabPanel>
         {user.userRole === 'Admin' && (
-          <TabPanel value={2}>
+          <TabPanel value={2} sx={{ padding: { xs: 0.5, sm: 1, md: 2 } }}>
             <Posts data={posts} />
           </TabPanel>
         )}
@@ -98,7 +101,7 @@ function Dashboard() {
 const Posts = ({ data }) => {
   return (
     <Grid container spacing={2}>
-      <Grid xs={8}>
+      <Grid xs={12} md={8} order={{ xs: 1, md: 0 }} flexGrow={1}>
         <Sheet variant='outlined' sx={{ borderRadius: 'md', padding: 1 }}>
           <Stack gap={2}>
             <Typography level='title-lg'>Posts</Typography>
@@ -111,7 +114,7 @@ const Posts = ({ data }) => {
         </Sheet>
       </Grid>
 
-      <Grid xs={4}>
+      <Grid xs={12} md={4} order={{ xs: 0, md: 1 }} flexGrow={1}>
         <Sheet variant='outlined' sx={{ borderRadius: 'md' }}>
           <Table variant='plain' borderAxis='none'>
             <thead>
@@ -186,21 +189,38 @@ const ItemList = ({ data }) => {
       <AccordionSummary>
         <Stack direction={'row'} gap={2} alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
           <Stack direction={'row'} gap={2} alignItems={'center'}>
-            <AspectRatio ratio={4 / 3} sx={{ minWidth: '100px', borderRadius: 'xs' }}>
+            <AspectRatio ratio={4 / 3} objectFit='cover' sx={{ minWidth: { xs: '80px', md: '100px' }, borderRadius: 'xs' }}>
               <img src={item.itemImgURL[0]} alt='' />
             </AspectRatio>
             <Stack>
               <Typography level='title-lg'>{item.itemName}</Typography>
               <Typography level='body-sm'>{item.sellerName}</Typography>
+              <Typography level='body-sm'>{dateFormat(item.startDate)}</Typography>
             </Stack>
           </Stack>
-          <Typography level='body-sm'>{dateFormat(item.startDate)}</Typography>
-          {item.postStatus == 'pending' ? <Chip color='warning'>Pending</Chip> : <Chip color='success'>Accepted</Chip>}
+          {item.postStatus == 'pending' ? (
+            <Chip sx={{ display: { xs: 'none', md: 'flex' } }} color='warning'>
+              Pending
+            </Chip>
+          ) : (
+            <Chip sx={{ display: { xs: 'none', md: 'flex' } }} color='success'>
+              Accepted
+            </Chip>
+          )}
+          {item.postStatus == 'pending' ? (
+            <Chip sx={{ display: { xs: 'flex', md: 'none' }, padding: 1, aspectRatio: '1/1', alignItems: 'center', justifyContent: 'center' }} color='warning'>
+              <IoMdTime />
+            </Chip>
+          ) : (
+            <Chip sx={{ display: { xs: 'flex', md: 'none' }, padding: 1, aspectRatio: '1/1', alignItems: 'center', justifyContent: 'center' }} color='success'>
+              <FaCheck />
+            </Chip>
+          )}
         </Stack>
       </AccordionSummary>
       <AccordionDetails sx={{ mt: 2 }}>
         <Grid container spacing={2}>
-          <Grid xs={6}>
+          <Grid xs={12} sm={6} order={1}>
             <Stack direction={'row'} alignItems={'center'} gap={1}>
               <Avatar size='md' alt='Remy Sharp' src='' />
               <Stack>
@@ -214,12 +234,19 @@ const ItemList = ({ data }) => {
               <Typography level='h3' mt={2}>
                 {item.itemName}
               </Typography>
-              <Typography></Typography>
               <Typography level='body-sm'>{item.itemDetail}</Typography>
             </Stack>
             <Sheet sx={{ mt: 5 }}>
               <Table variant='plain' borderAxis='none'>
                 <tbody>
+                  <tr>
+                    <td>Categories</td>
+                    <td>
+                      {item.itemCategories.map((cate) => {
+                        return cate.title + ', ';
+                      })}
+                    </td>
+                  </tr>
                   <tr>
                     <td>Location</td>
                     <td>{item.location.join(', ')}</td>
@@ -238,11 +265,11 @@ const ItemList = ({ data }) => {
                   </tr>
                   <tr>
                     <td>Start Price</td>
-                    <td>$ {item.initialPrice.toLocaleString()}</td>
+                    <td>$ {Number(item.initialPrice).toLocaleString()}</td>
                   </tr>
                   <tr>
                     <td>Bid Increment</td>
-                    <td>$ {item.bidIncrement.toLocaleString()}</td>
+                    <td>$ {Number(item.bidIncrement).toLocaleString()}</td>
                   </tr>
                 </tbody>
               </Table>
@@ -257,9 +284,9 @@ const ItemList = ({ data }) => {
             </Stack>
           </Grid>
 
-          <Grid xs={6}>
+          <Grid xs={12} sm={6} order={0}>
             <Stack gap={1}>
-              <AspectRatio ratio={16 / 9} sx={{ borderRadius: 'sm' }}>
+              <AspectRatio ratio={16 / 9} objectFit='contain' sx={{ borderRadius: 'sm' }}>
                 <img src={activeImg} alt='' />
               </AspectRatio>
               <Stack direction={'row'} gap={1} overflow={'auto'}>
@@ -280,20 +307,95 @@ const ItemList = ({ data }) => {
 };
 
 const CreatePostTab = () => {
+  const user = useSelector((state) => state.user.value);
+  const dataCollectionRef = collection(db, 'posts');
+
   const [itemName, setItemName] = useState('');
   const [description, setDescription] = useState('');
+  const [categories, setCategories] = useState([]);
   const [district, setDistrict] = useState('');
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [endTime, setEndTime] = useState('');
   const [initialPrice, setInitialPrice] = useState('');
   const [bidIncrement, setBidIncrement] = useState('');
 
+  const [imgs, setImgs] = useState([]);
+  const [imgsName, setImgsName] = useState([]);
+
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+
+  const handleUpload = (e) => {
+    const uploadedObject = [...e.target.files];
+
+    uploadedObject.map((img) => {
+      const fileName = `user-uploaded/${v4()}`;
+      const imgs = ref(storeDB, fileName);
+      uploadBytes(imgs, img).then((data) => {
+        console.log('uploaded');
+        getDownloadURL(data.ref).then((val) => {
+          setImgs((prev) => [...prev, val]);
+          setImgsName((prev) => [...prev, fileName]);
+        });
+      });
+    });
+  };
+
+  const handleDeleteImg = (img) => {
+    const index = imgs.findIndex((item) => item == img);
+    console.log(imgsName[index]);
+    deleteObject(ref(storeDB, imgsName[index])).then(() => {
+      setImgsName((prevNames) => prevNames.filter((each) => each != imgsName[index]));
+      setImgs((prevImgs) => prevImgs.filter((each) => each != img));
+    });
+  };
+
+  const handleSubmitData = (e) => {
+    e.preventDefault();
+    const inputData = {
+      sellerID: String(user.userId),
+      sellerName: user.userName,
+      sellerProfileImg: 'https://images.pexels.com/photos/1490844/pexels-photo-1490844.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+      itemName: itemName,
+      itemDetail: description,
+      itemImgURL: imgs,
+      itemCategories: categories,
+      postStatus: 'pending',
+      location: [district, city, country],
+      initialPrice: initialPrice,
+      bidIncrement: bidIncrement,
+      biddingHistory: [],
+      startDate: new Timestamp(Math.floor(Date.now() / 1000), Math.floor(Date.now() / 1000000)),
+      endDate: new Timestamp(Math.floor(new Date(endDate).getTime() / 1000), Math.floor(new Date(endDate).getTime() / 1000000)),
+    };
+
+    addDoc(dataCollectionRef, inputData).then(() => {
+      setOpenSnackBar(true);
+      clearInput();
+    });
+  };
+
+  const clearInput = () => {
+    setItemName('');
+    setDescription('');
+    setCategories([]);
+    setCity('');
+    setDistrict('');
+    setCountry('');
+    setBidIncrement('');
+    setInitialPrice('');
+    setEndDate('');
+    setImgs([]);
+  };
+
+  const categoriesList = [{ title: 'Electronics' }, { title: 'Vehicle' }];
+
   return (
-    <Stack gap={2} mt={2} width={'30%'}>
-      <Typography level='h2'>Create Post</Typography>
-      <form>
+    <Stack gap={2} mt={2} width={{ xs: '100%', sm: '80%', md: '70%', lg: '50%' }} margin={'0 auto'}>
+      <Typography level='h2' textAlign={'center'} fontSize={{ xs: 18, sm: 20, md: 22, lg: 24 }} mt={5}>
+        Create Post
+      </Typography>
+      <form onSubmit={(e) => handleSubmitData(e)}>
         <Stack direction={'column'} gap={3}>
           <Box>
             <FormLabel>Item Name</FormLabel>
@@ -318,11 +420,58 @@ const CreatePostTab = () => {
             />
           </Box>
 
-          <Box>File Upload</Box>
+          <Stack gap={1}>
+            <FormLabel>Item Images</FormLabel>
+            <input type='file' accept='image/png, image/jpeg, image/jpg' multiple required onChange={(e) => handleUpload(e)} />
+            <Card sx={{ padding: 1, minHeight: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {imgs.length == 0 ? (
+                <>
+                  <Typography>No File Chosen</Typography>
+                  <Typography>{'Support files (JPG, PNG, JPEG)'}</Typography>
+                </>
+              ) : (
+                <Typography>{imgs.length} File(s) Chosen</Typography>
+              )}
+              {imgs?.map((img) => {
+                return (
+                  <Card key={Math.random() + Math.random() * Date.now()} sx={{ padding: 1, width: '100%' }}>
+                    <Stack direction={'row'} overflow={'hidden'} justifyContent={'space-between'} alignItems={'center'}>
+                      <AspectRatio objectFit='contain' minHeight={100} maxHeight={100} sx={{ minWidth: 100, maxWidth: 250, flexGrow: 1 }}>
+                        <img src={img} alt='' />
+                      </AspectRatio>
 
-          <Stack direction={'row'} gap={2}>
+                      <IconButton color='danger' variant='outlined' onClick={() => handleDeleteImg(img)}>
+                        <FiTrash />
+                      </IconButton>
+                    </Stack>
+                  </Card>
+                );
+              })}
+            </Card>
+          </Stack>
+
+          <Stack>
+            <FormLabel>Item Categories</FormLabel>
+            <Autocomplete
+              id='tags-default'
+              multiple
+              placeholder='Favorites'
+              options={categoriesList}
+              getOptionLabel={(option) => option.title}
+              onChange={(e, newValue) => setCategories(newValue)}
+              renderTags={(tags, getTagProps) => {
+                return tags.map((item, index) => (
+                  <Chip key={index} variant='solid' color='primary' endDecorator={'x'} {...getTagProps({ index })}>
+                    {item.title}
+                  </Chip>
+                ));
+              }}
+            />
+          </Stack>
+
+          <Stack direction={{ xs: 'column', md: 'row' }} gap={2}>
             <Typography>Location</Typography>
-            <Stack gap={1}>
+            <Stack gap={1} flexGrow={1}>
               <Input value={district} onChange={(e) => setDistrict(e.target.value)} placeholder='Enter District' required sx={{ boxShadow: 'none' }} />
               <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder='Enter City' required sx={{ boxShadow: 'none' }} />
               <Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder='Enter Country' required sx={{ boxShadow: 'none' }} />
@@ -332,8 +481,10 @@ const CreatePostTab = () => {
             <FormLabel>End Date</FormLabel>
             <Stack direction={'row'} gap={1}>
               <Input
-                // value={}
-                onChange={(e) => console.log(new Date(e.target.value))}
+                value={endDate}
+                onChange={(e) => {
+                  setEndDate(e.target.value);
+                }}
                 type='date'
                 slotProps={{
                   input: {
@@ -356,12 +507,31 @@ const CreatePostTab = () => {
             <FormLabel>Increment Amount</FormLabel>
             <Input value={bidIncrement} onChange={(e) => setBidIncrement(e.target.value)} startDecorator={'$'} placeholder='Enter Bid Increment' type='number' required sx={{ boxShadow: 'none' }} />
           </Box>
-
-          <Button type='submit' sx={{ width: 'fit-content' }}>
+          <Button type='submit' sx={{ width: 'fit-content', alignSelf: 'center' }}>
             Submit
           </Button>
         </Stack>
       </form>
+
+      <Snackbar
+        variant='solid'
+        color='success'
+        startDecorator={<IoMdCheckmarkCircleOutline style={{ fontSize: '42px' }} />}
+        endDecorator={
+          <IconButton color='success' onClick={() => setOpenSnackBar(false)}>
+            <IoMdClose />
+          </IconButton>
+        }
+        open={openSnackBar}
+        onClose={() => {
+          setOpenSnackBar(false);
+        }}
+      >
+        <Stack>
+          <Typography level='title-lg'>Post Submited.</Typography>
+          <Typography>Your post need to be reviewed before going to public.</Typography>
+        </Stack>
+      </Snackbar>
     </Stack>
   );
 };
