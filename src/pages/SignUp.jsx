@@ -87,11 +87,11 @@ export default function SignUp() {
 
           <Stack alignItems={'center'} direction={"row"} gap={2} >
 
-              <Stack >
-              <Button>
-              term and Conditions
-              </Button>
-              </Stack>
+              <Box>
+              <button>
+                
+              </button>
+              </Box>
 
               <Stack>
               <Button>
