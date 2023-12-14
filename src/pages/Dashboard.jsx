@@ -52,7 +52,7 @@ function Dashboard() {
             </Typography>
           </Stack>
         </TabList>
-        <TabPanel value={user.userRole != 'Admin' && 2}>
+        <TabPanel value={user.userRole != 'Admin' ? 2 : 3}>
           <CreatePost />
         </TabPanel>
         <TabPanel value={1}>

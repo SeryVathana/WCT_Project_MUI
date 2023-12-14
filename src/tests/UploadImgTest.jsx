@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { storeDB } from '../firebaseConfig';
 import { v4 } from 'uuid';
+import { storeDB } from '../firebaseConfig';
 
-import { AspectRatio, Button, Card, IconButton, Stack } from '@mui/joy';
+import { AspectRatio, Card, IconButton, Stack } from '@mui/joy';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 import { FiTrash } from 'react-icons/fi';

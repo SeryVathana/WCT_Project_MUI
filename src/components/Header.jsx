@@ -23,11 +23,11 @@ const navLinks = [
   },
   {
     title: 'About',
-    url: '#',
+    url: '/',
   },
   {
     title: 'Contact',
-    url: '#',
+    url: '/',
   },
 ];
 
@@ -60,8 +60,22 @@ export default function Header() {
 
         {!isLoggedIn && (
           <>
-            <Button sx={{ display: { xs: 'none', sm: 'inline-block' } }}>Register</Button>
-            <Button sx={{ display: { xs: 'none', sm: 'inline-block' } }} color='neutral' variant='outlined' onClick={() => dispatch(switchLogin())}>
+            <Button
+              sx={{ display: { xs: 'none', sm: 'inline-block' } }}
+              onClick={() => {
+                navigate('/signup');
+              }}
+            >
+              Register
+            </Button>
+            <Button
+              sx={{ display: { xs: 'none', sm: 'inline-block' } }}
+              color='neutral'
+              variant='outlined'
+              onClick={() => {
+                navigate('/signin');
+              }}
+            >
               Log In
             </Button>
           </>
@@ -90,7 +104,7 @@ export default function Header() {
                   </NavLink>
                 </MenuItem>
                 <MenuItem disabled>
-                  <NavLink to={'/dashboard'} style={{ textDecoration: 'none' }}>
+                  <NavLink to={'/'} style={{ textDecoration: 'none' }}>
                     <Stack direction={'row'} alignItems={'center'} gap={1} color='neutral' underline='none'>
                       <Typography mb={0.5}>
                         <IoSettingsOutline />
@@ -101,8 +115,9 @@ export default function Header() {
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    dispatch(switchLogin());
+                    signOut(auth);
                     navigate('/');
+                    dispatch(switchLogin());
                   }}
                 >
                   <NavLink to={'/dashboard'} style={{ textDecoration: 'none' }}>
@@ -177,30 +192,31 @@ function MobileDrawer() {
               <Typography
                 onClick={() => {
                   setOpen(false);
-                  dispatch(switchLogin());
-                  navigate('/');
+                  navigate('/signin');
                 }}
                 sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}
               >
                 Log In
               </Typography>
               {/* </NavLink> */}
-              <NavLink to={'/register'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
+              <NavLink to={'/signup'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
                 <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Register</Typography>
               </NavLink>
             </>
           ) : (
             <>
-              <NavLink to={'/login'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
+              <NavLink to={'/dashboard'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
                 <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Dashboard</Typography>
               </NavLink>
-              <NavLink to={'/login'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
+              <NavLink to={'/'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
                 <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Setting</Typography>
               </NavLink>
 
               <Typography
                 onClick={() => {
                   setOpen(false);
+                  signOut(auth);
+                  navigate('/');
                   dispatch(switchLogin());
                 }}
                 sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}
@@ -215,9 +231,10 @@ function MobileDrawer() {
   );
 }
 
-import { db } from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
 
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
 
 function SearchDrawer() {
   const [open, setOpen] = useState(false);
