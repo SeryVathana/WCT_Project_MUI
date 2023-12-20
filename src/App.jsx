@@ -1,4 +1,9 @@
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import Browse from './pages/Browse';
@@ -13,6 +18,7 @@ import { auth, db } from './firebaseConfig';
 import { useDispatch } from 'react-redux';
 import { setUser } from './redux/actions/userSlice';
 import { switchLogin } from './redux/actions/loginSlice';
+import Notfound from './pages/Notfound';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +31,7 @@ const router = createBrowserRouter(
       <Route path='/signin' element={<SignIn />} />
       <Route path='/signup' element={<SignUp />} />
       <Route path='/test' element={<UploadImgTest />} />
+      <Route path='/*' element={<Notfound />} />
     </Route>
   )
 );

@@ -6,11 +6,12 @@ import { db } from '../firebaseConfig';
 import { useEffect, useState } from 'react';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function Item() {
   const user = useSelector((state) => state.user.value);
   const param = useParams();
+  const navigate = useNavigate();
   const docRef = doc(db, 'items', param.id);
 
   const [data, setData] = useState([]);
@@ -24,6 +25,8 @@ function Item() {
   });
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const getData = async () => {
       const docSnap = await getDoc(docRef);
       setData({ ...docSnap.data(), id: docSnap.id });
@@ -36,6 +39,11 @@ function Item() {
   }, []);
 
   const BidPrice = async () => {
+    if (user.userId == 0) {
+      navigate('/signin');
+      return;
+    }
+
     if (biddingValue < data.bidIncrement) {
       return;
     }
@@ -57,6 +65,18 @@ function Item() {
       setData(newData);
       setLastBidder(newData?.biddingHistory[newData.biddingHistory?.length - 1]);
       console.log('Value of an Existing Document Field has been updated');
+
+      const bidHis = [...user.userBiddingHistory];
+      bidHis.push(data.id);
+
+      updateDoc(doc(db, 'users', user.userId), {
+        email: user.userEmail,
+        firstName: user.userFirstName,
+        lastName: user.userLastName,
+        pfImgURL: user.userPfp,
+        role: user.userRole,
+        biddingHistory: bidHis,
+      });
     });
   };
 
@@ -73,7 +93,11 @@ function Item() {
         <Stack direction={'row'} gap={1} overflow={'auto'}>
           {data.itemImgURL?.map((img) => {
             return (
-              <AspectRatio key={Math.random()} ratio={4 / 3} sx={{ minWidth: '80px', borderRadius: 'sm' }}>
+              <AspectRatio
+                key={Math.random()}
+                ratio={4 / 3}
+                sx={{ minWidth: '80px', borderRadius: 'sm' }}
+              >
                 <img src={img} alt='' onClick={(e) => setActiveImg(e.target.src)} />
               </AspectRatio>
             );
@@ -94,7 +118,11 @@ function Item() {
         <Typography level='h3' mt={1}>
           {data.itemName}
         </Typography>
-        <Typography level='body-sm'>{data.itemDetail}</Typography>
+        <Stack>
+          <Typography>Description: </Typography>
+          <Typography level='body-sm'>{data.itemDetail}</Typography>
+        </Stack>
+        <Typography mt={3}>Details: </Typography>
         <Sheet>
           <Table variant='plain' borderAxis='none'>
             <tbody>
@@ -125,7 +153,9 @@ function Item() {
               <tr>
                 <td style={{ width: '30%' }}>Current Price</td>
                 <td>
-                  <Typography level='title-lg'>$ {Number(currentPrice).toLocaleString()}</Typography>
+                  <Typography level='title-lg'>
+                    $ {Number(currentPrice).toLocaleString()}
+                  </Typography>
                 </td>
               </tr>
               <tr>
@@ -136,39 +166,45 @@ function Item() {
           </Table>
         </Sheet>
 
-        <Stack direction={'row'} mt={3} gap={1}>
-          <Input
-            placeholder='Enter Bidding Price'
-            size='lg'
-            type='number'
-            disabled={lastBidder?.bidderID === user.userId}
-            value={biddingValue}
-            slotProps={{
-              input: {
-                min: 100,
-                step: 1,
-              },
-            }}
-            onChange={(e) => setBiddingValue(e.target.value)}
-            startDecorator={'$'}
-            sx={{ boxShadow: 'none', width: { xs: '200px', sm: '300px' } }}
-          />
+        {data.sellerID != user.userId ? (
+          <>
+            <Stack direction={'row'} mt={3} gap={1}>
+              <Input
+                placeholder='Enter Bidding Price'
+                size='lg'
+                type='number'
+                disabled={lastBidder?.bidderID === user.userId}
+                value={biddingValue}
+                slotProps={{
+                  input: {
+                    min: 100,
+                    step: 1,
+                  },
+                }}
+                onChange={(e) => setBiddingValue(e.target.value)}
+                startDecorator={'$'}
+                sx={{ boxShadow: 'none', width: { xs: '200px', sm: '300px' } }}
+              />
 
-          <Button
-            type='submit'
-            disabled={lastBidder?.bidderID === user.userId}
-            onClick={(e) => {
-              e.preventDefault();
-              BidPrice(data);
-            }}
-          >
-            Place Bid
-          </Button>
-        </Stack>
-        {lastBidder?.bidderID === user.userId && (
-          <Typography color='warning' level='body-sm'>
-            Your are the last bidder, you cannot bid again.
-          </Typography>
+              <Button
+                type='submit'
+                disabled={lastBidder?.bidderID === user.userId}
+                onClick={(e) => {
+                  e.preventDefault();
+                  BidPrice(data);
+                }}
+              >
+                Place Bid
+              </Button>
+            </Stack>
+            {lastBidder?.bidderID === user.userId && (
+              <Typography color='warning' level='body-sm'>
+                Your are the last bidder, you cannot bid again.
+              </Typography>
+            )}
+          </>
+        ) : (
+          ''
         )}
       </Stack>
       <Stack gap={2}>

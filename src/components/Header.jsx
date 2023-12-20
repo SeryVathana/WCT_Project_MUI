@@ -1,4 +1,23 @@
-import { Avatar, Box, Button, DialogTitle, Divider, Drawer, Dropdown, IconButton, Input, List, Menu, MenuButton, MenuItem, ModalClose, Sheet, Stack, Typography } from '@mui/joy';
+/* eslint-disable react/prop-types */
+import {
+  Avatar,
+  Box,
+  Button,
+  DialogTitle,
+  Divider,
+  Drawer,
+  Dropdown,
+  IconButton,
+  Input,
+  List,
+  Menu,
+  MenuButton,
+  MenuItem,
+  ModalClose,
+  Sheet,
+  Stack,
+  Typography,
+} from '@mui/joy';
 import ModeToggle from './ModeToggle';
 
 import { useState } from 'react';
@@ -23,11 +42,11 @@ const navLinks = [
   },
   {
     title: 'About',
-    url: '/',
+    url: '/about',
   },
   {
     title: 'Contact',
-    url: '/',
+    url: '/contact',
   },
 ];
 
@@ -37,13 +56,36 @@ export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    const guest = {
+      id: 0,
+      firstName: 'Guest',
+      lastName: '',
+      pfImgURL: '',
+      role: 'Guest',
+    };
+
+    dispatch(setUser(guest));
+    dispatch(switchLogin());
+  };
+
   return (
-    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} sx={{ position: 'relative', top: '0', pt: 3, pb: 1, zIndex: 10, overflow: 'hidden' }}>
+    <Stack
+      direction={'row'}
+      justifyContent={'space-between'}
+      alignItems={'center'}
+      sx={{ position: 'relative', top: '0', pt: 3, pb: 1, zIndex: 10, overflow: 'hidden' }}
+    >
       <Stack direction='row' gap={10}>
         <Typography level='h4' color='primary'>
           Auctionaire
         </Typography>
-        <Stack direction='row' alignItems={'center'} gap={5} sx={{ display: { xs: 'none', md: 'flex' } }}>
+        <Stack
+          direction='row'
+          alignItems={'center'}
+          gap={5}
+          sx={{ display: { xs: 'none', md: 'flex' } }}
+        >
           {navLinks.map((link) => {
             return (
               <NavLink key={link.title} to={link.url} style={{ textDecoration: 'none' }}>
@@ -95,7 +137,13 @@ export default function Header() {
               <Menu>
                 <MenuItem>
                   <NavLink to={'/dashboard'} style={{ textDecoration: 'none' }}>
-                    <Stack direction={'row'} alignItems={'center'} gap={1} color='neutral' underline='none'>
+                    <Stack
+                      direction={'row'}
+                      alignItems={'center'}
+                      gap={1}
+                      color='neutral'
+                      underline='none'
+                    >
                       <Typography mb={0.5}>
                         <FiUser />
                       </Typography>
@@ -105,7 +153,13 @@ export default function Header() {
                 </MenuItem>
                 <MenuItem disabled>
                   <NavLink to={'/'} style={{ textDecoration: 'none' }}>
-                    <Stack direction={'row'} alignItems={'center'} gap={1} color='neutral' underline='none'>
+                    <Stack
+                      direction={'row'}
+                      alignItems={'center'}
+                      gap={1}
+                      color='neutral'
+                      underline='none'
+                    >
                       <Typography mb={0.5}>
                         <IoSettingsOutline />
                       </Typography>
@@ -117,11 +171,17 @@ export default function Header() {
                   onClick={() => {
                     signOut(auth);
                     navigate('/');
-                    dispatch(switchLogin());
+                    handleLogout();
                   }}
                 >
                   <NavLink to={'/dashboard'} style={{ textDecoration: 'none' }}>
-                    <Stack direction={'row'} alignItems={'center'} gap={1} color='neutral' underline='none'>
+                    <Stack
+                      direction={'row'}
+                      alignItems={'center'}
+                      gap={1}
+                      color='neutral'
+                      underline='none'
+                    >
                       <Typography mb={0.5}>
                         <MdLogout />
                       </Typography>
@@ -135,17 +195,16 @@ export default function Header() {
         )}
 
         <Box sx={{ display: { xs: 'inline-block', md: 'none' } }}>
-          <MobileDrawer />
+          <MobileDrawer handleLogout={handleLogout} />
         </Box>
       </Stack>
     </Stack>
   );
 }
 
-function MobileDrawer() {
+function MobileDrawer({ handleLogout }) {
   const [open, setOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.login.value);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   return (
     <>
@@ -174,21 +233,32 @@ function MobileDrawer() {
           }}
         >
           <NavLink to={'/'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Home</Typography>
+            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>
+              Home
+            </Typography>
           </NavLink>
           <NavLink to={'/browse'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Browse</Typography>
+            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>
+              Browse
+            </Typography>
           </NavLink>
           <NavLink to={'/about'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>About</Typography>
+            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>
+              About
+            </Typography>
           </NavLink>
-          <NavLink to={'/contact'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Contact</Typography>
+          <NavLink
+            to={'/contact'}
+            style={{ textDecoration: 'none' }}
+            onClick={() => setOpen(false)}
+          >
+            <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>
+              Contact
+            </Typography>
           </NavLink>
           <Divider />
           {!isLoggedIn ? (
             <>
-              {/* <NavLink to={'/login'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}> */}
               <Typography
                 onClick={() => {
                   setOpen(false);
@@ -199,17 +269,31 @@ function MobileDrawer() {
                 Log In
               </Typography>
               {/* </NavLink> */}
-              <NavLink to={'/signup'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-                <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Register</Typography>
+              <NavLink
+                to={'/signup'}
+                style={{ textDecoration: 'none' }}
+                onClick={() => setOpen(false)}
+              >
+                <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>
+                  Register
+                </Typography>
               </NavLink>
             </>
           ) : (
             <>
-              <NavLink to={'/dashboard'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-                <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Dashboard</Typography>
+              <NavLink
+                to={'/dashboard'}
+                style={{ textDecoration: 'none' }}
+                onClick={() => setOpen(false)}
+              >
+                <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>
+                  Dashboard
+                </Typography>
               </NavLink>
               <NavLink to={'/'} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-                <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>Setting</Typography>
+                <Typography sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}>
+                  Setting
+                </Typography>
               </NavLink>
 
               <Typography
@@ -217,7 +301,7 @@ function MobileDrawer() {
                   setOpen(false);
                   signOut(auth);
                   navigate('/');
-                  dispatch(switchLogin());
+                  handleLogout();
                 }}
                 sx={{ textAlign: 'end', display: 'flex', justifyContent: 'center' }}
               >
@@ -235,6 +319,7 @@ import { auth, db } from '../firebaseConfig';
 
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
+import { setUser } from '../redux/actions/userSlice';
 
 function SearchDrawer() {
   const [open, setOpen] = useState(false);
@@ -242,25 +327,28 @@ function SearchDrawer() {
   const colRef = collection(db, 'items');
 
   const [data, setData] = useState([]);
-  // const [backUpData, setBackUpData] = useState([]);
 
   function handleSearchItem(value) {
     setSearchValue(value);
-    // console.log(value);
-    const q = query(colRef, where('itemName', '>=', value.toLowerCase()), where('itemName', '<=', '~'));
-    const q1 = query(colRef, where('itemName', '>=', value.toUpperCase()), where('itemName', '<=', '~'));
+
+    const q = query(
+      colRef,
+      where('itemName', '>=', value.toLowerCase()),
+      where('itemName', '<=', '~')
+    );
+    const q1 = query(
+      colRef,
+      where('itemName', '>=', value.toUpperCase()),
+      where('itemName', '<=', '~')
+    );
+
     if (value !== '' && value.length >= 3) {
       onSnapshot(q, (snapshot) => {
         setData(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // setBackUpData(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
       });
       onSnapshot(q1, (snapshot) => {
         setData(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
-        // setBackUpData(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
       });
-
-      // const searchResult = backUpData?.filter((item) => item.itemName.toLowerCase().includes(value.toLowerCase()));
-      // setData(searchResult);
     }
     if (value == '') {
       setData([]);

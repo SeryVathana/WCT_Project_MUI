@@ -1,27 +1,28 @@
-import { Box, Button, Input, Link, Stack, Typography } from '@mui/joy';
+import { Alert, Box, Button, Input, Stack, Typography } from '@mui/joy';
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { auth, db } from '../firebaseConfig';
 
 import { useDispatch } from 'react-redux';
 import { switchLogin } from '../redux/actions/loginSlice';
 import { setUser } from '../redux/actions/userSlice';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function SignIn() {
   const [inputEmail, setInputEmail] = useState('');
   const [inputPassword, setInputPassword] = useState('');
+  const [isError, setIsError] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const inputData = {
-    //   email: inputEmail,
-    //   password: inputPassword,
-    // };
 
     onAuthStateChanged(auth, (currentUser) => {
       const colRef = collection(db, 'users');
@@ -30,7 +31,6 @@ export default function SignIn() {
         dispatch(switchLogin());
 
         const q = query(colRef, where('email', '==', currentUser?.email));
-        console.log(currentUser.email);
         onSnapshot(q, (snapshot) =>
           snapshot.docs.map((doc) => {
             const user = { ...doc.data(), id: doc.id };
@@ -41,21 +41,23 @@ export default function SignIn() {
       }
     });
 
-    signInWithEmailAndPassword(auth, inputEmail, inputPassword).then(() => {
-      dispatch(switchLogin());
-      const colRef = collection(db, 'users');
-      const q = query(colRef, where('email', '==', inputEmail));
-      onSnapshot(q, (snapshot) =>
-        snapshot.docs.map((doc) => {
-          const user = { ...doc.data(), id: doc.id };
+    signInWithEmailAndPassword(auth, inputEmail, inputPassword)
+      .then(() => {
+        dispatch(switchLogin());
+        const colRef = collection(db, 'users');
+        const q = query(colRef, where('email', '==', inputEmail));
+        onSnapshot(q, (snapshot) =>
+          snapshot.docs.map((doc) => {
+            const user = { ...doc.data(), id: doc.id };
 
-          navigate('/');
-          dispatch(setUser(user));
-        })
-      );
-    });
-
-    // console.log(inputData);
+            navigate('/');
+            dispatch(setUser(user));
+          })
+        );
+      })
+      .catch(() => {
+        setIsError(true);
+      });
   };
 
   return (
@@ -96,6 +98,13 @@ export default function SignIn() {
               sx={{ boxShadow: 'none' }}
             />
           </Box>
+          {isError ? (
+            <Alert color={'danger'} sx={{ display: 'flex', justifyContent: 'center' }}>
+              Incorrect email or password.
+            </Alert>
+          ) : (
+            ''
+          )}
           <Button type='submit' size='lg'>
             Sign In
           </Button>
@@ -106,7 +115,9 @@ export default function SignIn() {
         <Typography>
           New here?{' '}
           <span>
-            <Link>Sign Up</Link>
+            <Link to='/signup'>
+              <Typography color='neutral'>Sign Up</Typography>
+            </Link>
           </span>{' '}
           Now
         </Typography>

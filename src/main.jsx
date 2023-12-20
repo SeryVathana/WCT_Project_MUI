@@ -4,12 +4,12 @@ import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './index.css';
 
-import { theme } from './theme/theme.jsx';
-import { CssVarsProvider } from '@mui/joy/styles';
 import { CssBaseline } from '@mui/joy';
+import { CssVarsProvider } from '@mui/joy/styles';
+import { theme } from './theme/theme.jsx';
 
-import { store } from './redux/store.js';
 import { Provider } from 'react-redux';
+import { store } from './redux/store.js';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional

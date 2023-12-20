@@ -61,7 +61,7 @@ export const CreatePost = () => {
     const inputData = {
       sellerID: String(user.userId),
       sellerName: user.userName,
-      sellerProfileImg: 'https://images.pexels.com/photos/1490844/pexels-photo-1490844.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+      sellerProfileImg: user.userPfp,
       itemName: itemName,
       itemDetail: description,
       itemImgURL: imgs,

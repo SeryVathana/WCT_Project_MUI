@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
-import { AspectRatio, Button, Card, IconButton, Stack, Typography } from '@mui/joy';
-import { BsBookmark } from 'react-icons/bs';
+import { AspectRatio, Button, Card, Stack, Typography } from '@mui/joy';
 import { Link } from 'react-router-dom';
 
 export default function ItemCard({ item }) {
@@ -29,16 +28,13 @@ export default function ItemCard({ item }) {
           <img src={item.itemImgURL} srcSet={item.itemImgURL + '2x'} loading='lazy' alt='' style={{ transition: 'all 0.2s linear' }} />
         </AspectRatio>
 
-        <Stack gap={0.5} justifyContent={'space-between'} flexGrow={1}>
+        <Stack gap={1} justifyContent={'space-between'} flexGrow={1}>
           <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
             <Link to={`/item/${item.id}`} style={{ textDecoration: 'none' }}>
               <Typography level='title-lg' sx={{ height: 'fit-content', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 1, overflow: 'hidden' }}>
                 {item.itemName}
               </Typography>
             </Link>
-            <IconButton>
-              <BsBookmark />
-            </IconButton>
           </Stack>
           <Typography level='body-sm' sx={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 1, overflow: 'hidden' }}>
             {item.location.join(' | ')}
@@ -48,12 +44,12 @@ export default function ItemCard({ item }) {
             Current: ${Number(currentPrice).toLocaleString()}
           </Typography>
           <Stack direction={{ xs: 'column-reverse', sm: 'row' }} justifyContent={'space-between'} alignItems={{ xs: 'start', sm: 'center' }} gap={1} mt={{ xs: 0, sm: 1 }}>
+            <Typography level='body-sm'>3d : 3h : 3mn</Typography>
             <Link to={`/item/${item.id}`}>
               <Button variant='outlined' color='neutral' size='md'>
                 Place Bid
               </Button>
             </Link>
-            <Typography level='body-sm'>3d : 3h : 3mn</Typography>
           </Stack>
         </Stack>
       </Stack>

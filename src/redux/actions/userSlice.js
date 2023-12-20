@@ -7,12 +7,6 @@ const initialState = {
     userPfp: '',
     userRole: 'user',
   },
-  // value: {
-  //   userId: 10,
-  //   userName: 'Rin Samnang',
-  //   userPfp: 'https://images.pexels.com/photos/783941/pexels-photo-783941.jpeg?auto=compress&cs=tinysrgb&w=800',
-  //   userRole: 'User',
-  // },
 };
 
 export const userSlice = createSlice({
@@ -25,6 +19,10 @@ export const userSlice = createSlice({
         userName: actions.payload.firstName + ' ' + actions.payload.lastName,
         userPfp: actions.payload.pfImgURL,
         userRole: actions.payload.role,
+        userEmail: actions.payload.email,
+        userFirstName: actions.payload.firstName,
+        userLastName: actions.payload.lastName,
+        userBiddingHistory: actions.payload.biddingHistory,
       };
     },
   },

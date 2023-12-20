@@ -1,8 +1,10 @@
-import { Box, Button, Checkbox, Grid, Input, Link, Option, Select, Stack, Typography } from '@mui/joy';
+import { Box, Button, Checkbox, Grid, Input, Option, Select, Stack, Typography } from '@mui/joy';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { Timestamp, addDoc, collection } from 'firebase/firestore';
-import { useState } from 'react';
+import { collection } from 'firebase/firestore';
+import { addDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
 import { auth, db } from '../firebaseConfig';
+import { Link } from 'react-router-dom';
 
 export default function SignUp() {
   const [firstName, setFirstName] = useState('');
@@ -11,6 +13,10 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [phoneNum, setPhoneNum] = useState('');
   const [birthDate, setBirthDate] = useState('');
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleSubmitData = async (e) => {
     e.preventDefault();
@@ -22,11 +28,6 @@ export default function SignUp() {
       pfImgURL: 'https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg',
       phoneNum,
       //   birthDate: new Timestamp(Math.floor(new Date(birthDate).getTime() / 1000), Math.floor(new Date(birthDate).getTime() / 1000000)),
-    };
-
-    const signUpData = {
-      email,
-      password,
     };
 
     createUserWithEmailAndPassword(auth, email, password)
@@ -132,32 +133,6 @@ export default function SignUp() {
             sx={{ boxShadow: 'none' }}
           />
         </Stack>
-        {/* <Grid container spacing={2} alignItems={'end'}>
-        <Grid xs={4}>
-        <Input placeholder=' Day' variant='outlined' color='neutral' size='md' sx={{ boxShadow: 'none' }} />
-        </Grid>
-        <Grid xs={4}>
-        <Input placeholder=' Mouth' variant='outlined' color='neutral' size='md' sx={{ boxShadow: 'none' }} />
-        </Grid>
-        <Grid xs={4}>
-        <Input placeholder=' Year' variant='outlined' color='neutral' size='md' sx={{ boxShadow: 'none' }} />
-        </Grid>
-    </Grid> */}
-
-        {/* <Grid container alignItems={'end'} width={'100%'} gap={2}>
-        <Grid xs={12} md={7}>
-        <h6>Credit Card</h6>
-        <Input placeholder='XXXX XXXX XXXX' variant='outlined' color='neutral' size='md' sx={{ boxShadow: 'none' }} />
-        </Grid>
-        <Grid xs={2} flexGrow={1} alignItems={'center'}>
-        <h6>Expire Date</h6>
-        <Input placeholder=' MM/YYYY' variant='outlined' color='neutral' size='md' sx={{ boxShadow: 'none' }} />
-        </Grid>
-        <Grid xs={2} flexGrow={1}>
-        <h6>CVV</h6>
-        <Input placeholder=' XXXX' variant='outlined' color='neutral' size='md' sx={{ boxShadow: 'none' }} />
-        </Grid>
-    </Grid> */}
 
         <Stack gap={2}>
           <Checkbox size='sm' label='Term and Conditions' required />
@@ -170,7 +145,9 @@ export default function SignUp() {
           <Typography>
             Already have an account?{' '}
             <span>
-              <Link>Sign In</Link>
+              <Link to='/signin'>
+                <Typography color='neutral'>Sign In</Typography>
+              </Link>
             </span>{' '}
             Now
           </Typography>

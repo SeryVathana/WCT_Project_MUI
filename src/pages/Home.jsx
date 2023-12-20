@@ -3,11 +3,12 @@ import { Button, Grid, Stack, Typography } from '@mui/joy';
 // import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { FaArrowRightLong } from 'react-icons/fa6';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ItemCard from '../components/ItemCard';
 
 import { db } from '../firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
+import { useSelector } from 'react-redux';
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -31,6 +32,9 @@ export default function Home() {
 }
 
 function Hero() {
+  const user = useSelector((state) => state.user.value);
+  const navigate = useNavigate();
+
   return (
     <Stack alignItems={'center'} textAlign={'center'} pb={10}>
       <Typography component='h1' level={'h1'} maxWidth={650} fontSize={{ xs: 32, sm: 42, md: 56 }} fontWeight={400} mt={8} lineHeight={1.5}>
@@ -41,7 +45,17 @@ function Hero() {
         exercitationem obcaecati? Labore, eaque!
       </Typography>
       <Stack direction={{ xs: 'column', md: 'row' }} gap={5} mt={5}>
-        <Button size='lg'>Join Us</Button>
+        <Button
+          size='lg'
+          onClick={(e) => {
+            e.preventDefault();
+
+            navigate(user.userId == 0 ? '/signup' : '/dashboard');
+          }}
+        >
+          {user.userId == 0 ? 'Join Us' : 'Dashboard'}
+        </Button>
+
         <Link to={'/browse'}>
           <Button variant='plain' size='lg' color='neutral'>
             <Typography mr={2}>Browse More</Typography> <FaArrowRightLong />
@@ -78,326 +92,3 @@ function CardContainer({ items }) {
     </Stack>
   );
 }
-
-// const items = [
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-//   {
-//     itemName: 'Headphone',
-//     itemDetail: 'lorem30',
-//     itemImgURL: 'https://images.unsplash.com/photo-1593121925328-369cc8459c08?auto=format&fit=crop&w=286',
-//     location: ['Siem Reap', 'Siem Reap', 'Cambodia'],
-//     bidIncrement: 100,
-//     currentPrice: 3000,
-//   },
-// ];
