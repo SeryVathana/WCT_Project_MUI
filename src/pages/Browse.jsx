@@ -1,7 +1,16 @@
 // import axios from 'axios';
 
 /* eslint-disable react/prop-types */
-import { Button, FormControl, FormLabel, IconButton, Option, Select, Stack, Typography } from '@mui/joy';
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  IconButton,
+  Option,
+  Select,
+  Stack,
+  Typography,
+} from '@mui/joy';
 import { useEffect, useState } from 'react';
 import BigCardContainer from '../components/BigCardContainer';
 
@@ -40,6 +49,7 @@ export default function Browse() {
   const [data, setData] = useState([]);
   const [backUpData, setBackUpData] = useState([]);
   const [categoryValue, setCategoryValue] = useState(categories[0]);
+  const [sortValue, setSortValue] = useState('default');
 
   const dataCollectionRef = collection(db, 'items');
 
@@ -72,10 +82,33 @@ export default function Browse() {
     setCategoryValue(inputCategory);
 
     if (inputCategory !== 'Default') {
-      const filterdData = backUpData.filter((item) => item?.itemCategories?.includes(inputCategory));
+      const filterdData = backUpData.filter((item) =>
+        item?.itemCategories?.includes(inputCategory)
+      );
       setData(filterdData);
     } else {
       setData(backUpData);
+    }
+  };
+
+  const handleSort = (inputSort) => {
+    setSortValue(inputSort);
+
+    console.log(inputSort);
+    if (inputSort == 'default') {
+      setData(() => [...backUpData]);
+    } else if (inputSort == 'name') {
+      setData((prevData) => prevData.sort((a, b) => a.itemName.localeCompare(b.itemName)));
+    } else if (inputSort == 'newest') {
+      setData((prevData) => prevData.sort((a, b) => b.startDate.seconds - a.startDate.seconds));
+    } else if (inputSort == 'oldest') {
+      setData((prevData) => prevData.sort((a, b) => a.startDate.seconds - b.startDate.seconds));
+    } else if (inputSort == 'popular') {
+      setData((prevData) =>
+        prevData.sort((a, b) => b.biddingHistory.length - a.biddingHistory.length)
+      );
+    } else if (inputSort == 'almost end') {
+      setData(() => [...backUpData]);
     }
   };
 
@@ -97,7 +130,11 @@ export default function Browse() {
             size='sm'
             color='neutral'
             disabled={currentPage === 1}
-            sx={{ userSelect: 'none', fontSize: { xs: '12px', sm: 'inherit' }, padding: { xs: '5px 10px', sm: 'auto' } }}
+            sx={{
+              userSelect: 'none',
+              fontSize: { xs: '12px', sm: 'inherit' },
+              padding: { xs: '5px 10px', sm: 'auto' },
+            }}
             onClick={() => setCurrentPage(currentPage - 1)}
           >
             <IoIosArrowBack />
@@ -108,7 +145,11 @@ export default function Browse() {
               size='sm'
               color='neutral'
               key={index}
-              sx={{ userSelect: 'none', fontSize: { xs: '12px', sm: 'inherit' }, padding: { xs: '5px 10px', sm: 'auto' } }}
+              sx={{
+                userSelect: 'none',
+                fontSize: { xs: '12px', sm: 'inherit' },
+                padding: { xs: '5px 10px', sm: 'auto' },
+              }}
               onClick={() => handlePageChange(index + 1)}
             >
               {index + 1}
@@ -119,7 +160,11 @@ export default function Browse() {
             size='sm'
             color='neutral'
             disabled={currentPage === totalPages}
-            sx={{ userSelect: 'none', fontSize: { xs: '12px', sm: 'inherit' }, padding: { xs: '5px 10px', sm: 'auto' } }}
+            sx={{
+              userSelect: 'none',
+              fontSize: { xs: '12px', sm: 'inherit' },
+              padding: { xs: '5px 10px', sm: 'auto' },
+            }}
             onClick={() => setCurrentPage(currentPage + 1)}
           >
             <IoIosArrowForward />
@@ -127,7 +172,11 @@ export default function Browse() {
         </Stack>
         <Stack direction={{ xs: 'row', md: 'row' }} gap={{ xs: 1, md: 5 }}>
           <FormControl>
-            <Stack direction={{ xs: 'column', md: 'row' }} alignItems={'start'} gap={{ xs: 0, md: 2 }}>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              alignItems={'start'}
+              gap={{ xs: 0, md: 2 }}
+            >
               <FormLabel sx={{ height: '36px', margin: '0' }}>
                 <Typography>Category: </Typography>
               </FormLabel>
@@ -137,7 +186,11 @@ export default function Browse() {
                 onChange={(event, newValue) => {
                   handleChangeCategories(newValue);
                 }}
-                sx={{ width: { xs: '180px', sm: '150px', md: '200px' }, boxShadow: 'none', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px' } }}
+                sx={{
+                  width: { xs: '180px', sm: '150px', md: '200px' },
+                  boxShadow: 'none',
+                  fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px' },
+                }}
               >
                 {categories.map((category) => {
                   return (
@@ -150,11 +203,25 @@ export default function Browse() {
             </Stack>
           </FormControl>
           <FormControl>
-            <Stack direction={{ xs: 'column', md: 'row' }} alignItems={'start'} gap={{ xs: 0, md: 2 }}>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              alignItems={'start'}
+              gap={{ xs: 0, md: 2 }}
+            >
               <FormLabel sx={{ height: '36px', margin: '0' }}>
                 <Typography>Sort by: </Typography>
               </FormLabel>
-              <Select defaultValue='default' sx={{ boxShadow: 'none', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px' } }}>
+              <Select
+                defaultValue='default'
+                value={sortValue}
+                onChange={(event, newValue) => {
+                  handleSort(newValue);
+                }}
+                sx={{
+                  boxShadow: 'none',
+                  fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px' },
+                }}
+              >
                 <Option value='default'>Default</Option>
                 <Option value='name'>Name</Option>
                 <Option value='newest'>Newest</Option>
@@ -173,7 +240,11 @@ export default function Browse() {
           size='sm'
           color='neutral'
           disabled={currentPage === 1}
-          sx={{ userSelect: 'none', fontSize: { xs: '12px', sm: 'inherit' }, padding: { xs: '5px 10px', sm: 'auto' } }}
+          sx={{
+            userSelect: 'none',
+            fontSize: { xs: '12px', sm: 'inherit' },
+            padding: { xs: '5px 10px', sm: 'auto' },
+          }}
           onClick={() => setCurrentPage(currentPage - 1)}
         >
           <IoIosArrowBack />
@@ -184,7 +255,11 @@ export default function Browse() {
             size='sm'
             color='neutral'
             key={index}
-            sx={{ userSelect: 'none', fontSize: { xs: '12px', sm: 'inherit' }, padding: { xs: '5px 10px', sm: 'auto' } }}
+            sx={{
+              userSelect: 'none',
+              fontSize: { xs: '12px', sm: 'inherit' },
+              padding: { xs: '5px 10px', sm: 'auto' },
+            }}
             onClick={() => handlePageChange(index + 1)}
           >
             {index + 1}
@@ -195,7 +270,11 @@ export default function Browse() {
           size='sm'
           color='neutral'
           disabled={currentPage === totalPages}
-          sx={{ userSelect: 'none', fontSize: { xs: '12px', sm: 'inherit' }, padding: { xs: '5px 10px', sm: 'auto' } }}
+          sx={{
+            userSelect: 'none',
+            fontSize: { xs: '12px', sm: 'inherit' },
+            padding: { xs: '5px 10px', sm: 'auto' },
+          }}
           onClick={() => setCurrentPage(currentPage + 1)}
         >
           <IoIosArrowForward />

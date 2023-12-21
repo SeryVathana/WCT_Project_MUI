@@ -1,9 +1,25 @@
 /* eslint-disable react/prop-types */
-import { AspectRatio, Box, Button, Card, Chip, FormLabel, IconButton, Input, Modal, ModalDialog, ModalOverflow, Snackbar, Stack, Textarea, Typography } from '@mui/joy';
+import {
+  AspectRatio,
+  Box,
+  Button,
+  Card,
+  Chip,
+  FormLabel,
+  IconButton,
+  Input,
+  Modal,
+  ModalDialog,
+  ModalOverflow,
+  Snackbar,
+  Stack,
+  Textarea,
+  Typography,
+} from '@mui/joy';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { IoMdClose } from 'react-icons/io';
-// import { useSelector } from 'react-redux';
+
 import Autocomplete from '@mui/joy/Autocomplete';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { FiTrash } from 'react-icons/fi';
@@ -12,7 +28,6 @@ import { v4 } from 'uuid';
 import { db, storeDB } from '../firebaseConfig';
 
 export const EditPost = ({ curData, setCurData, openEditForm, setOpenEditForm }) => {
-  // const user = useSelector((state) => state.user.value);
   const dataPostsRef = doc(db, 'posts', curData?.id);
 
   const [itemName, setItemName] = useState(curData?.itemName);
@@ -56,6 +71,14 @@ export const EditPost = ({ curData, setCurData, openEditForm, setOpenEditForm })
   };
 
   const handleSubmitData = (e) => {
+    let cateArr = [];
+
+    if (categories.length > 0) {
+      categories.map((cat) => cateArr.push(cat.title));
+    } else {
+      cateArr = ['Default'];
+    }
+
     e.preventDefault();
     const inputData = {
       id: curData.id,
@@ -65,7 +88,7 @@ export const EditPost = ({ curData, setCurData, openEditForm, setOpenEditForm })
       itemName: itemName,
       itemDetail: description,
       itemImgURL: imgs,
-      itemCategories: categories,
+      itemCategories: cateArr,
       postStatus: curData.postStatus,
       location: [district, city, country],
       initialPrice: initialPrice,
@@ -103,15 +126,30 @@ export const EditPost = ({ curData, setCurData, openEditForm, setOpenEditForm })
     <Modal open={openEditForm} onClose={() => setOpenEditForm(false)}>
       <ModalOverflow>
         <ModalDialog sx={{ width: '100%' }}>
-          <Stack gap={2} mt={2} width={{ xs: '100%', sm: '80%', md: '70%', lg: '50%' }} margin={'0 auto'}>
-            <Typography level='h2' textAlign={'center'} fontSize={{ xs: 18, sm: 20, md: 22, lg: 24 }} mt={5}>
+          <Stack
+            gap={2}
+            mt={2}
+            width={{ xs: '100%', sm: '80%', md: '70%', lg: '50%' }}
+            margin={'0 auto'}
+          >
+            <Typography
+              level='h2'
+              textAlign={'center'}
+              fontSize={{ xs: 18, sm: 20, md: 22, lg: 24 }}
+              mt={5}
+            >
               Edit Post
             </Typography>
             <form onSubmit={(e) => handleSubmitData(e)}>
               <Stack direction={'column'} gap={3}>
                 <Box>
                   <FormLabel>Item Name</FormLabel>
-                  <Input value={itemName} onChange={(e) => setItemName(e.target.value)} placeholder='Enter Item Name' sx={{ boxShadow: 'none' }} />
+                  <Input
+                    value={itemName}
+                    onChange={(e) => setItemName(e.target.value)}
+                    placeholder='Enter Item Name'
+                    sx={{ boxShadow: 'none' }}
+                  />
                 </Box>
                 <Box>
                   <FormLabel>Item Description</FormLabel>
@@ -133,8 +171,21 @@ export const EditPost = ({ curData, setCurData, openEditForm, setOpenEditForm })
 
                 <Stack gap={1}>
                   <FormLabel>Item Images</FormLabel>
-                  <input type='file' accept='image/png, image/jpeg, image/jpg' multiple onChange={(e) => handleUpload(e)} />
-                  <Card sx={{ padding: 1, minHeight: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <input
+                    type='file'
+                    accept='image/png, image/jpeg, image/jpg'
+                    multiple
+                    onChange={(e) => handleUpload(e)}
+                  />
+                  <Card
+                    sx={{
+                      padding: 1,
+                      minHeight: '100px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
                     {imgs.length == 0 ? (
                       <>
                         <Typography>No File Chosen</Typography>
@@ -145,13 +196,30 @@ export const EditPost = ({ curData, setCurData, openEditForm, setOpenEditForm })
                     )}
                     {imgs?.map((img) => {
                       return (
-                        <Card key={Math.random() + Math.random() * Date.now()} sx={{ padding: 1, width: '100%' }}>
-                          <Stack direction={'row'} overflow={'hidden'} justifyContent={'space-between'} alignItems={'center'}>
-                            <AspectRatio objectFit='contain' minHeight={100} maxHeight={100} sx={{ minWidth: 100, maxWidth: 250, flexGrow: 1 }}>
+                        <Card
+                          key={Math.random() + Math.random() * Date.now()}
+                          sx={{ padding: 1, width: '100%' }}
+                        >
+                          <Stack
+                            direction={'row'}
+                            overflow={'hidden'}
+                            justifyContent={'space-between'}
+                            alignItems={'center'}
+                          >
+                            <AspectRatio
+                              objectFit='contain'
+                              minHeight={100}
+                              maxHeight={100}
+                              sx={{ minWidth: 100, maxWidth: 250, flexGrow: 1 }}
+                            >
                               <img src={img} alt='' />
                             </AspectRatio>
 
-                            <IconButton color='danger' variant='outlined' onClick={() => handleDeleteImg(img)}>
+                            <IconButton
+                              color='danger'
+                              variant='outlined'
+                              onClick={() => handleDeleteImg(img)}
+                            >
                               <FiTrash />
                             </IconButton>
                           </Stack>
@@ -166,13 +234,19 @@ export const EditPost = ({ curData, setCurData, openEditForm, setOpenEditForm })
                   <Autocomplete
                     id='tags-default'
                     multiple
-                    placeholder='Favorites'
+                    placeholder='Categories'
                     options={categoriesList}
                     getOptionLabel={(option) => option.title}
                     onChange={(e, newValue) => setCategories(newValue)}
                     renderTags={(tags, getTagProps) => {
                       return tags.map((item, index) => (
-                        <Chip key={index} variant='solid' color='primary' endDecorator={'x'} {...getTagProps({ index })}>
+                        <Chip
+                          key={index}
+                          variant='solid'
+                          color='primary'
+                          endDecorator={'x'}
+                          {...getTagProps({ index })}
+                        >
                           {item.title}
                         </Chip>
                       ));
@@ -183,9 +257,24 @@ export const EditPost = ({ curData, setCurData, openEditForm, setOpenEditForm })
                 <Stack direction={{ xs: 'column', md: 'row' }} gap={2}>
                   <Typography>Location</Typography>
                   <Stack gap={1} flexGrow={1}>
-                    <Input value={district} onChange={(e) => setDistrict(e.target.value)} placeholder='Enter District' sx={{ boxShadow: 'none' }} />
-                    <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder='Enter City' sx={{ boxShadow: 'none' }} />
-                    <Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder='Enter Country' sx={{ boxShadow: 'none' }} />
+                    <Input
+                      value={district}
+                      onChange={(e) => setDistrict(e.target.value)}
+                      placeholder='Enter District'
+                      sx={{ boxShadow: 'none' }}
+                    />
+                    <Input
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      placeholder='Enter City'
+                      sx={{ boxShadow: 'none' }}
+                    />
+                    <Input
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                      placeholder='Enter Country'
+                      sx={{ boxShadow: 'none' }}
+                    />
                   </Stack>
                 </Stack>
                 <Box>
@@ -199,7 +288,11 @@ export const EditPost = ({ curData, setCurData, openEditForm, setOpenEditForm })
                       type='date'
                       slotProps={{
                         input: {
-                          min: new Date(Date.now()).toISOString().replace(/T.*/, '').split('-').join('-'),
+                          min: new Date(Date.now())
+                            .toISOString()
+                            .replace(/T.*/, '')
+                            .split('-')
+                            .join('-'),
                         },
                       }}
                       sx={{ boxShadow: 'none', flexGrow: 1 }}
@@ -210,15 +303,34 @@ export const EditPost = ({ curData, setCurData, openEditForm, setOpenEditForm })
 
                 <Box>
                   <FormLabel>Initial Price</FormLabel>
-                  <Input value={initialPrice} onChange={(e) => setInitialPrice(e.target.value)} startDecorator={'$'} placeholder='Enter Initial Price' type='number' sx={{ boxShadow: 'none' }} />
+                  <Input
+                    value={initialPrice}
+                    onChange={(e) => setInitialPrice(e.target.value)}
+                    startDecorator={'$'}
+                    placeholder='Enter Initial Price'
+                    type='number'
+                    sx={{ boxShadow: 'none' }}
+                  />
                 </Box>
 
                 <Box>
                   <FormLabel>Increment Amount</FormLabel>
-                  <Input value={bidIncrement} onChange={(e) => setBidIncrement(e.target.value)} startDecorator={'$'} placeholder='Enter Bid Increment' type='number' sx={{ boxShadow: 'none' }} />
+                  <Input
+                    value={bidIncrement}
+                    onChange={(e) => setBidIncrement(e.target.value)}
+                    startDecorator={'$'}
+                    placeholder='Enter Bid Increment'
+                    type='number'
+                    sx={{ boxShadow: 'none' }}
+                  />
                 </Box>
                 <Stack direction={'row'} justifyContent={'end'} gap={2}>
-                  <Button color='danger' variant='outlined' onClick={() => setOpenEditForm(false)} sx={{ width: 'fit-content', alignSelf: 'center' }}>
+                  <Button
+                    color='danger'
+                    variant='outlined'
+                    onClick={() => setOpenEditForm(false)}
+                    sx={{ width: 'fit-content', alignSelf: 'center' }}
+                  >
                     Cancle
                   </Button>
                   <Button type='submit' sx={{ width: 'fit-content', alignSelf: 'center' }}>

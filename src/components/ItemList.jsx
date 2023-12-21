@@ -1,6 +1,19 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, AspectRatio, Avatar, Button, Chip, Grid, Sheet, Stack, Table, Typography } from '@mui/joy';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  AspectRatio,
+  Avatar,
+  Button,
+  Chip,
+  Grid,
+  Sheet,
+  Stack,
+  Table,
+  Typography,
+} from '@mui/joy';
 import { deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 import { FaCheck } from 'react-icons/fa6';
@@ -55,9 +68,19 @@ export const ItemList = ({ data }) => {
   return (
     <Accordion>
       <AccordionSummary>
-        <Stack direction={'row'} gap={2} alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
+        <Stack
+          direction={'row'}
+          gap={2}
+          alignItems={'center'}
+          justifyContent={'space-between'}
+          width={'100%'}
+        >
           <Stack direction={'row'} gap={2} alignItems={'center'}>
-            <AspectRatio ratio={4 / 3} objectFit='cover' sx={{ minWidth: { xs: '80px', md: '100px' }, borderRadius: 'xs' }}>
+            <AspectRatio
+              ratio={4 / 3}
+              objectFit='cover'
+              sx={{ minWidth: { xs: '80px', md: '100px' }, borderRadius: 'xs' }}
+            >
               <img src={item.itemImgURL[0]} alt='' />
             </AspectRatio>
             <Stack>
@@ -76,11 +99,29 @@ export const ItemList = ({ data }) => {
             </Chip>
           )}
           {item.postStatus == 'pending' ? (
-            <Chip sx={{ display: { xs: 'flex', md: 'none' }, padding: 1, aspectRatio: '1/1', alignItems: 'center', justifyContent: 'center' }} color='warning'>
+            <Chip
+              sx={{
+                display: { xs: 'flex', md: 'none' },
+                padding: 1,
+                aspectRatio: '1/1',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              color='warning'
+            >
               <IoMdTime />
             </Chip>
           ) : (
-            <Chip sx={{ display: { xs: 'flex', md: 'none' }, padding: 1, aspectRatio: '1/1', alignItems: 'center', justifyContent: 'center' }} color='success'>
+            <Chip
+              sx={{
+                display: { xs: 'flex', md: 'none' },
+                padding: 1,
+                aspectRatio: '1/1',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              color='success'
+            >
               <FaCheck />
             </Chip>
           )}
@@ -111,7 +152,7 @@ export const ItemList = ({ data }) => {
                     <td>Categories</td>
                     <td>
                       {item.itemCategories.map((cate) => {
-                        return cate.title + ', ';
+                        return cate + ', ';
                       })}
                     </td>
                   </tr>
@@ -148,7 +189,11 @@ export const ItemList = ({ data }) => {
                   <Button disabled={item.postStatus === 'accepted'} onClick={() => AcceptPost()}>
                     Approve
                   </Button>
-                  <Button disabled={item.postStatus === 'pending'} onClick={() => RejectPost()} color='danger'>
+                  <Button
+                    disabled={item.postStatus === 'pending'}
+                    onClick={() => RejectPost()}
+                    color='danger'
+                  >
                     Reject
                   </Button>
                 </>
@@ -181,7 +226,11 @@ export const ItemList = ({ data }) => {
               <Stack direction={'row'} gap={1} overflow={'auto'}>
                 {item.itemImgURL?.map((img) => {
                   return (
-                    <AspectRatio key={Math.random()} ratio={4 / 3} sx={{ minWidth: '80px', borderRadius: 'xs' }}>
+                    <AspectRatio
+                      key={Math.random()}
+                      ratio={4 / 3}
+                      sx={{ minWidth: '80px', borderRadius: 'xs' }}
+                    >
                       <img src={img} alt='' onClick={(e) => setActiveImg(e.target.src)} />
                     </AspectRatio>
                   );
@@ -191,7 +240,14 @@ export const ItemList = ({ data }) => {
           </Grid>
         </Grid>
       </AccordionDetails>
-      {openEditForm && <EditPost curData={editingData} setCurData={setItem} openEditForm={openEditForm} setOpenEditForm={setOpenEditForm} />}
+      {openEditForm && (
+        <EditPost
+          curData={editingData}
+          setCurData={setItem}
+          openEditForm={openEditForm}
+          setOpenEditForm={setOpenEditForm}
+        />
+      )}
     </Accordion>
   );
 };

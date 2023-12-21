@@ -27,6 +27,7 @@ export default function SignUp() {
       email,
       pfImgURL: 'https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg',
       phoneNum,
+      role: 'user',
       //   birthDate: new Timestamp(Math.floor(new Date(birthDate).getTime() / 1000), Math.floor(new Date(birthDate).getTime() / 1000000)),
     };
 
@@ -42,7 +43,10 @@ export default function SignUp() {
 
   return (
     <form onSubmit={(e) => handleSubmitData(e)}>
-      <Stack gap={5} sx={{ margin: '50px auto', width: { xs: '100%', sm: '80%', md: '50%', lg: '40%' } }}>
+      <Stack
+        gap={5}
+        sx={{ margin: '50px auto', width: { xs: '100%', sm: '80%', md: '50%', lg: '40%' } }}
+      >
         <Stack justifyContent={'center'} alignItems={'center'}>
           <Typography level='h1'>Sign Up</Typography>
         </Stack>
@@ -63,7 +67,16 @@ export default function SignUp() {
           </Grid>
           <Grid xs={12} sm={6}>
             <h6>Last Name</h6>
-            <Input value={lastName} onChange={(e) => setLastName(e.target.value)} required placeholder='Enter Your Last Name' variant='outlined' color='neutral' size='md' sx={{ boxShadow: 'none' }} />
+            <Input
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+              placeholder='Enter Your Last Name'
+              variant='outlined'
+              color='neutral'
+              size='md'
+              sx={{ boxShadow: 'none' }}
+            />
           </Grid>
         </Grid>
 
@@ -104,7 +117,11 @@ export default function SignUp() {
             required
             placeholder='Phone number'
             startDecorator={
-              <Select variant='plain' defaultValue={'+855'} sx={{ '&:hover': { bgcolor: 'transparent' } }}>
+              <Select
+                variant='plain'
+                defaultValue={'+855'}
+                sx={{ '&:hover': { bgcolor: 'transparent' } }}
+              >
                 <Option value='+855'>+855</Option>
                 <Option value='+168'>+168</Option>
                 <Option value='+999'>+999</Option>

@@ -1,5 +1,18 @@
 import { useState } from 'react';
-import { AspectRatio, Box, Button, Card, Chip, FormLabel, IconButton, Input, Snackbar, Stack, Textarea, Typography } from '@mui/joy';
+import {
+  AspectRatio,
+  Box,
+  Button,
+  Card,
+  Chip,
+  FormLabel,
+  IconButton,
+  Input,
+  Snackbar,
+  Stack,
+  Textarea,
+  Typography,
+} from '@mui/joy';
 import { Timestamp, addDoc } from 'firebase/firestore';
 import { IoMdClose } from 'react-icons/io';
 import { useSelector } from 'react-redux';
@@ -58,6 +71,15 @@ export const CreatePost = () => {
 
   const handleSubmitData = (e) => {
     e.preventDefault();
+
+    let cateArr = [];
+
+    if (categories.length > 0) {
+      categories.map((cat) => cateArr.push(cat.title));
+    } else {
+      cateArr = ['Default'];
+    }
+
     const inputData = {
       sellerID: String(user.userId),
       sellerName: user.userName,
@@ -65,14 +87,17 @@ export const CreatePost = () => {
       itemName: itemName,
       itemDetail: description,
       itemImgURL: imgs,
-      itemCategories: categories,
+      itemCategories: cateArr,
       postStatus: 'pending',
       location: [district, city, country],
       initialPrice: initialPrice,
       bidIncrement: bidIncrement,
       biddingHistory: [],
       startDate: new Timestamp(Math.floor(Date.now() / 1000), Math.floor(Date.now() / 1000000)),
-      endDate: new Timestamp(Math.floor(new Date(endDate).getTime() / 1000), Math.floor(new Date(endDate).getTime() / 1000000)),
+      endDate: new Timestamp(
+        Math.floor(new Date(endDate).getTime() / 1000),
+        Math.floor(new Date(endDate).getTime() / 1000000)
+      ),
     };
 
     addDoc(dataCollectionRef, inputData).then(() => {
@@ -98,14 +123,25 @@ export const CreatePost = () => {
 
   return (
     <Stack gap={2} mt={2} width={{ xs: '100%', sm: '80%', md: '70%', lg: '50%' }} margin={'0 auto'}>
-      <Typography level='h2' textAlign={'center'} fontSize={{ xs: 18, sm: 20, md: 22, lg: 24 }} mt={5}>
+      <Typography
+        level='h2'
+        textAlign={'center'}
+        fontSize={{ xs: 18, sm: 20, md: 22, lg: 24 }}
+        mt={5}
+      >
         Create Post
       </Typography>
       <form onSubmit={(e) => handleSubmitData(e)}>
         <Stack direction={'column'} gap={3}>
           <Box>
             <FormLabel>Item Name</FormLabel>
-            <Input value={itemName} onChange={(e) => setItemName(e.target.value)} placeholder='Enter Item Name' required sx={{ boxShadow: 'none' }} />
+            <Input
+              value={itemName}
+              onChange={(e) => setItemName(e.target.value)}
+              placeholder='Enter Item Name'
+              required
+              sx={{ boxShadow: 'none' }}
+            />
           </Box>
           <Box>
             <FormLabel>Item Description</FormLabel>
@@ -128,8 +164,22 @@ export const CreatePost = () => {
 
           <Stack gap={1}>
             <FormLabel>Item Images</FormLabel>
-            <input type='file' accept='image/png, image/jpeg, image/jpg' multiple required onChange={(e) => handleUpload(e)} />
-            <Card sx={{ padding: 1, minHeight: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <input
+              type='file'
+              accept='image/png, image/jpeg, image/jpg'
+              multiple
+              required
+              onChange={(e) => handleUpload(e)}
+            />
+            <Card
+              sx={{
+                padding: 1,
+                minHeight: '100px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               {imgs.length == 0 ? (
                 <>
                   <Typography>No File Chosen</Typography>
@@ -140,13 +190,30 @@ export const CreatePost = () => {
               )}
               {imgs?.map((img) => {
                 return (
-                  <Card key={Math.random() + Math.random() * Date.now()} sx={{ padding: 1, width: '100%' }}>
-                    <Stack direction={'row'} overflow={'hidden'} justifyContent={'space-between'} alignItems={'center'}>
-                      <AspectRatio objectFit='contain' minHeight={100} maxHeight={100} sx={{ minWidth: 100, maxWidth: 250, flexGrow: 1 }}>
+                  <Card
+                    key={Math.random() + Math.random() * Date.now()}
+                    sx={{ padding: 1, width: '100%' }}
+                  >
+                    <Stack
+                      direction={'row'}
+                      overflow={'hidden'}
+                      justifyContent={'space-between'}
+                      alignItems={'center'}
+                    >
+                      <AspectRatio
+                        objectFit='contain'
+                        minHeight={100}
+                        maxHeight={100}
+                        sx={{ minWidth: 100, maxWidth: 250, flexGrow: 1 }}
+                      >
                         <img src={img} alt='' />
                       </AspectRatio>
 
-                      <IconButton color='danger' variant='outlined' onClick={() => handleDeleteImg(img)}>
+                      <IconButton
+                        color='danger'
+                        variant='outlined'
+                        onClick={() => handleDeleteImg(img)}
+                      >
                         <FiTrash />
                       </IconButton>
                     </Stack>
@@ -161,13 +228,19 @@ export const CreatePost = () => {
             <Autocomplete
               id='tags-default'
               multiple
-              placeholder='Favorites'
+              placeholder='Categories'
               options={categoriesList}
               getOptionLabel={(option) => option.title}
               onChange={(e, newValue) => setCategories(newValue)}
               renderTags={(tags, getTagProps) => {
                 return tags.map((item, index) => (
-                  <Chip key={index} variant='solid' color='primary' endDecorator={'x'} {...getTagProps({ index })}>
+                  <Chip
+                    key={index}
+                    variant='solid'
+                    color='primary'
+                    endDecorator={'x'}
+                    {...getTagProps({ index })}
+                  >
                     {item.title}
                   </Chip>
                 ));
@@ -178,9 +251,27 @@ export const CreatePost = () => {
           <Stack direction={{ xs: 'column', md: 'row' }} gap={2}>
             <Typography>Location</Typography>
             <Stack gap={1} flexGrow={1}>
-              <Input value={district} onChange={(e) => setDistrict(e.target.value)} placeholder='Enter District' required sx={{ boxShadow: 'none' }} />
-              <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder='Enter City' required sx={{ boxShadow: 'none' }} />
-              <Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder='Enter Country' required sx={{ boxShadow: 'none' }} />
+              <Input
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+                placeholder='Enter District'
+                required
+                sx={{ boxShadow: 'none' }}
+              />
+              <Input
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder='Enter City'
+                required
+                sx={{ boxShadow: 'none' }}
+              />
+              <Input
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                placeholder='Enter Country'
+                required
+                sx={{ boxShadow: 'none' }}
+              />
             </Stack>
           </Stack>
           <Box>
@@ -206,12 +297,28 @@ export const CreatePost = () => {
 
           <Box>
             <FormLabel>Initial Price</FormLabel>
-            <Input value={initialPrice} onChange={(e) => setInitialPrice(e.target.value)} startDecorator={'$'} placeholder='Enter Initial Price' type='number' required sx={{ boxShadow: 'none' }} />
+            <Input
+              value={initialPrice}
+              onChange={(e) => setInitialPrice(e.target.value)}
+              startDecorator={'$'}
+              placeholder='Enter Initial Price'
+              type='number'
+              required
+              sx={{ boxShadow: 'none' }}
+            />
           </Box>
 
           <Box>
             <FormLabel>Increment Amount</FormLabel>
-            <Input value={bidIncrement} onChange={(e) => setBidIncrement(e.target.value)} startDecorator={'$'} placeholder='Enter Bid Increment' type='number' required sx={{ boxShadow: 'none' }} />
+            <Input
+              value={bidIncrement}
+              onChange={(e) => setBidIncrement(e.target.value)}
+              startDecorator={'$'}
+              placeholder='Enter Bid Increment'
+              type='number'
+              required
+              sx={{ boxShadow: 'none' }}
+            />
           </Box>
           <Button type='submit' sx={{ width: 'fit-content', alignSelf: 'center' }}>
             Submit
