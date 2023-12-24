@@ -19,31 +19,9 @@ import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import { db } from '../firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 
-const categories = [
-  'Default',
-  'Electronics',
-  'Vehicle',
-  'Clothing',
-  'Shoes',
-  'Home and Furniture',
-  'Books',
-  'Toys and Games',
-  'Beauty and Personal Care',
-  'Sports and Outdoors',
-  'Jewelry',
-  'Automotive',
-  'Health and Wellness',
-  'Appliances',
-  'Pet Supplies',
-  'Office Supplies',
-  'Food and Grocery',
-  'Music and Movies',
-  'Crafts and Hobbies',
-  'Garden and Outdoor',
-  'Baby and Kids',
-  'Travel and Luggage',
-  'Fitness and Exercise',
-];
+import { ITEM_CATEGORIES } from '../data/data';
+
+const categories = ITEM_CATEGORIES;
 
 export default function Browse() {
   const [data, setData] = useState([]);

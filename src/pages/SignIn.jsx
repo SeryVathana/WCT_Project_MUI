@@ -52,6 +52,7 @@ export default function SignIn() {
 
             navigate('/');
             dispatch(setUser(user));
+            window.location.reload(false);
           })
         );
       })
@@ -61,7 +62,10 @@ export default function SignIn() {
   };
 
   return (
-    <Stack gap={5} sx={{ margin: '100px auto', width: { xs: '100%', sm: '80%', md: '50%', lg: '40%' } }}>
+    <Stack
+      gap={5}
+      sx={{ margin: '100px auto', width: { xs: '100%', sm: '80%', md: '50%', lg: '40%' } }}
+    >
       <Stack justifyContent={'center'} alignItems={'center'} gap={2}>
         <Typography level='h1' sx={{ fontSize: { xs: 22, sm: 28, md: 32, lg: 36 } }}>
           Welcome Back

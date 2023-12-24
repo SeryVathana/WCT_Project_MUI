@@ -25,6 +25,8 @@ import { v4 } from 'uuid';
 import { storeDB } from '../firebaseConfig';
 import Autocomplete from '@mui/joy/Autocomplete';
 
+import { ITEM_CATEGORIES } from '../data/data';
+
 export const CreatePost = () => {
   const user = useSelector((state) => state.user.value);
   const dataCollectionRef = collection(db, 'posts');
@@ -51,7 +53,6 @@ export const CreatePost = () => {
       const fileName = `user-uploaded/${v4()}`;
       const imgs = ref(storeDB, fileName);
       uploadBytes(imgs, img).then((data) => {
-        console.log('uploaded');
         getDownloadURL(data.ref).then((val) => {
           setImgs((prev) => [...prev, val]);
           setImgsName((prev) => [...prev, fileName]);
@@ -62,7 +63,6 @@ export const CreatePost = () => {
 
   const handleDeleteImg = (img) => {
     const index = imgs.findIndex((item) => item == img);
-    console.log(imgsName[index]);
     deleteObject(ref(storeDB, imgsName[index])).then(() => {
       setImgsName((prevNames) => prevNames.filter((each) => each != imgsName[index]));
       setImgs((prevImgs) => prevImgs.filter((each) => each != img));
@@ -119,7 +119,8 @@ export const CreatePost = () => {
     setImgs([]);
   };
 
-  const categoriesList = [{ title: 'Electronics' }, { title: 'Vehicle' }];
+  const categoriesList = [];
+  ITEM_CATEGORIES.map((category) => categoriesList.push({ title: category }));
 
   return (
     <Stack gap={2} mt={2} width={{ xs: '100%', sm: '80%', md: '70%', lg: '50%' }} margin={'0 auto'}>

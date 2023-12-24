@@ -25,30 +25,55 @@ function Dashboard() {
   const [myBids, setMyBids] = useState([]);
 
   useEffect(() => {
-    console.log('Hi');
     onSnapshot(dataCollectionRef, (snapshot) => {
       setUserPosts(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
     });
 
     onSnapshot(dataCollectionRef, (snapshot) => {
-      setMyPosts(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })).filter((data) => data.sellerID == user.userId));
+      setMyPosts(
+        snapshot.docs
+          ?.map((doc) => ({ ...doc.data(), id: doc.id }))
+          .filter((data) => data.sellerID == user.userId)
+      );
     });
 
-    console.log(user.userBiddingHistory);
+    const userBiddingHistory = user.userBiddingHistory;
 
     onSnapshot(bidCollectionRef, (snapshot) => {
-      user?.userBiddingHistory?.map((eachId) => {
-        setMyBids(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })).filter((data) => data.id == eachId));
-      });
+      const res = snapshot?.docs?.map((doc) => ({ ...doc.data(), id: doc.id }));
+      const tempData = [];
+
+      userBiddingHistory?.map((bid) => res?.map((item) => item.id == bid && tempData.push(item)));
+
+      const unique = new Set(tempData);
+      setMyBids([...unique]);
     });
   }, [user]);
 
   return (
     <Stack mt={3}>
-      <Tabs aria-label='Basic tabs' defaultValue={0} variant={'outlined'} sx={{ borderRadius: 'md' }}>
+      <Tabs
+        aria-label='Basic tabs'
+        defaultValue={0}
+        variant={'outlined'}
+        sx={{ borderRadius: 'md' }}
+      >
         <TabList>
-          <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} width={'100%'} paddingX={{ xs: 0, md: 2 }} pt={2}>
-            <Stack direction={{ xs: 'column', md: 'row' }} flexGrow={{ xs: 1, md: 0 }} justifyContent={'space-between'} alignItems={{ xs: 'center', md: 'end' }} gap={{ xs: 2, sm: 3, md: 4, lg: 5 }}>
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            justifyContent={'space-between'}
+            width={'100%'}
+            paddingX={{ xs: 0, md: 2 }}
+            pt={2}
+          >
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              flexGrow={{ xs: 1, md: 0 }}
+              justifyContent={'space-between'}
+              alignItems={{ xs: 'center', md: 'end' }}
+              gap={{ xs: 2, sm: 3, md: 4, lg: 5 }}
+            >
               <Typography level='h2' fontSize={{ xs: 18, sm: 20, md: 22, lg: 24 }}>
                 Dashboard
               </Typography>
@@ -84,6 +109,17 @@ function Dashboard() {
 }
 
 const Posts = ({ data }) => {
+  const [acceptedData, setAcceptedData] = useState(0);
+  const [pendingData, setPendingData] = useState(0);
+
+  useEffect(() => {
+    data.map((eachItem) =>
+      eachItem.postStatus === 'accepted'
+        ? setAcceptedData((prev) => prev + 1)
+        : setPendingData((prev) => prev + 1)
+    );
+  }, [data]);
+
   return (
     <Grid container spacing={2}>
       <Grid xs={12} md={8} order={{ xs: 1, md: 0 }} flexGrow={1}>
@@ -113,19 +149,16 @@ const Posts = ({ data }) => {
             <tbody>
               <tr>
                 <td>All Posts</td>
-                <td>1000 posts</td>
+                <td>{data.length} posts</td>
               </tr>
               <tr>
                 <td>Accepted Posts</td>
-                <td>850 posts</td>
+                <td>{acceptedData} posts</td>
               </tr>
-              <tr>
-                <td>Rejected Posts</td>
-                <td>50 posts</td>
-              </tr>
+
               <tr>
                 <td>Pending Posts</td>
-                <td>100 posts</td>
+                <td>{pendingData} posts</td>
               </tr>
             </tbody>
           </Table>
@@ -164,20 +197,20 @@ const Bids = ({ data }) => {
             </thead>
             <tbody>
               <tr>
-                <td>All Posts</td>
-                <td>1000 posts</td>
+                <td>All Bids</td>
+                <td>{data.length} items</td>
               </tr>
               <tr>
-                <td>Accepted Posts</td>
-                <td>850 posts</td>
+                <td>Outbid</td>
+                <td>0 items</td>
               </tr>
               <tr>
-                <td>Rejected Posts</td>
-                <td>50 posts</td>
+                <td>Last Bidder</td>
+                <td>0 items</td>
               </tr>
               <tr>
-                <td>Pending Posts</td>
-                <td>100 posts</td>
+                <td>Success Bid</td>
+                <td>0 items</td>
               </tr>
             </tbody>
           </Table>

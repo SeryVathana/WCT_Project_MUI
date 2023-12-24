@@ -67,6 +67,7 @@ export default function Header() {
 
     dispatch(setUser(guest));
     dispatch(switchLogin());
+    window.location.reload(false);
   };
 
   return (

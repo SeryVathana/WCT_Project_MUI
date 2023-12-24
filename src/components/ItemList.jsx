@@ -131,7 +131,7 @@ export const ItemList = ({ data }) => {
         <Grid container spacing={2}>
           <Grid xs={12} sm={6} order={1}>
             <Stack direction={'row'} alignItems={'center'} gap={1}>
-              <Avatar size='md' alt='Remy Sharp' src='' />
+              <Avatar size='md' alt='Remy Sharp' src={item.sellerProfileImg} />
               <Stack>
                 <Typography level='title-md'>{item.sellerName}</Typography>
                 <Typography level='body-sm' color='primary'>
