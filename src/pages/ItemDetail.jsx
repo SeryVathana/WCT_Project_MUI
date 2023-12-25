@@ -1,4 +1,15 @@
-import { AspectRatio, Avatar, Box, Button, Input, Sheet, Stack, Table, Typography } from '@mui/joy';
+import {
+  AspectRatio,
+  Avatar,
+  Box,
+  Button,
+  Input,
+  Sheet,
+  Snackbar,
+  Stack,
+  Table,
+  Typography,
+} from '@mui/joy';
 
 import { Timestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
@@ -18,6 +29,7 @@ export default function ItemDetail() {
   const [activeImg, setActiveImg] = useState('');
   const [biddingValue, setBiddingValue] = useState(0);
   const [lastBidder, setLastBidder] = useState();
+  const [openErrorSnackBar, setOpenErrorSnackBar] = useState(false);
 
   let currentPrice = Number(data.initialPrice);
   data.biddingHistory?.map((data) => {
@@ -44,7 +56,14 @@ export default function ItemDetail() {
       return;
     }
 
-    if (biddingValue < data.bidIncrement) {
+    console.log(biddingValue);
+
+    if (Number(biddingValue) < Number(data.bidIncrement)) {
+      setOpenErrorSnackBar(true);
+
+      setTimeout(() => {
+        setOpenErrorSnackBar(false);
+      }, 2000);
       return;
     }
 
@@ -64,7 +83,6 @@ export default function ItemDetail() {
     await updateDoc(docRef, newData).then(() => {
       setData(newData);
       setLastBidder(newData?.biddingHistory[newData.biddingHistory?.length - 1]);
-      console.log('Value of an Existing Document Field has been updated');
 
       const bidHis = [...user.userBiddingHistory];
       bidHis.push(data.id);
@@ -158,10 +176,6 @@ export default function ItemDetail() {
                   </Typography>
                 </td>
               </tr>
-              <tr>
-                <td style={{ width: '30%' }}>Your Last Bid</td>
-                <td>$ {lastBidder?.id === user.userId && lastBidder.bidPrice}</td>
-              </tr>
             </tbody>
           </Table>
         </Sheet>
@@ -237,6 +251,10 @@ export default function ItemDetail() {
           </Table>
         </Sheet>
       </Stack>
+
+      <Snackbar open={openErrorSnackBar} variant='solid' color='danger'>
+        Your bid must be equal or above bid increment.
+      </Snackbar>
     </Box>
   );
 }

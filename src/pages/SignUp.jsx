@@ -28,6 +28,7 @@ export default function SignUp() {
       pfImgURL: 'https://memes.co.in/memes/update/uploads/2021/12/InShot_20211209_222013681.jpg',
       phoneNum,
       role: 'user',
+      biddingHistory: [],
       //   birthDate: new Timestamp(Math.floor(new Date(birthDate).getTime() / 1000), Math.floor(new Date(birthDate).getTime() / 1000000)),
     };
 
