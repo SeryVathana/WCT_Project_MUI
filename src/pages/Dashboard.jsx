@@ -14,25 +14,17 @@ import { db } from '../firebaseConfig';
 import { BidList } from '../components/BidList';
 import { CreatePost } from '../components/CreatePost';
 import { ItemList } from '../components/ItemList';
-import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
   const user = useSelector((state) => state.user.value);
   const dataCollectionRef = collection(db, 'posts');
   const bidCollectionRef = collection(db, 'items');
 
-  const navigate = useNavigate();
-
   const [userPosts, setUserPosts] = useState([]);
   const [myPosts, setMyPosts] = useState([]);
   const [myBids, setMyBids] = useState([]);
 
   useEffect(() => {
-    if (user.userId == '0') {
-      navigate('/signin');
-      return;
-    }
-
     onSnapshot(dataCollectionRef, (snapshot) => {
       setUserPosts(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
     });
@@ -87,9 +79,9 @@ function Dashboard() {
               </Typography>
               <Stack direction={'row'} fontSize={{ xs: 12, sm: 16 }}>
                 <Tab>My Posts</Tab>
-                <Tab>Profile</Tab>
-                {user.userRole === 'Admin' && <Tab>User Posts</Tab>}
+                <Tab>My Bids</Tab>
                 <Tab sx={{ textAlign: 'center' }}>Create Post</Tab>
+                {user.userRole === 'Admin' && <Tab>User Posts</Tab>}
               </Stack>
             </Stack>
             <Typography level='body-md' sx={{ display: { xs: 'none', md: 'block' } }}>
@@ -97,20 +89,21 @@ function Dashboard() {
             </Typography>
           </Stack>
         </TabList>
-        <TabPanel value={user.userRole != 'Admin' ? 2 : 3}>
-          <CreatePost />
-        </TabPanel>
-        <TabPanel value={1}>
-          <Bids data={myBids} />
-        </TabPanel>
-        {user.userRole === 'Admin' && (
-          <TabPanel value={2} sx={{ padding: { xs: 0.5, sm: 1, md: 2 } }}>
-            <Posts data={userPosts} />
-          </TabPanel>
-        )}
         <TabPanel value={0}>
           <Posts data={myPosts} />
         </TabPanel>
+
+        <TabPanel value={1}>
+          <Bids data={myBids} />
+        </TabPanel>
+        <TabPanel value={2}>
+          <CreatePost />
+        </TabPanel>
+        {user.userRole === 'Admin' && (
+          <TabPanel value={3} sx={{ padding: { xs: 0.5, sm: 1, md: 2 } }}>
+            <Posts data={userPosts} />
+          </TabPanel>
+        )}
       </Tabs>
     </Stack>
   );
@@ -121,6 +114,8 @@ const Posts = ({ data }) => {
   const [pendingData, setPendingData] = useState(0);
 
   useEffect(() => {
+    setAcceptedData(0);
+    setPendingData(0);
     data.map((eachItem) =>
       eachItem.postStatus === 'accepted'
         ? setAcceptedData((prev) => prev + 1)
