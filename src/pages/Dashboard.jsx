@@ -30,6 +30,7 @@ function Dashboard() {
   useEffect(() => {
     if (user.userId == '0') {
       navigate('/signin');
+      return;
     }
 
     onSnapshot(dataCollectionRef, (snapshot) => {
