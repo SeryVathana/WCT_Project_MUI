@@ -14,17 +14,24 @@ import { db } from '../firebaseConfig';
 import { BidList } from '../components/BidList';
 import { CreatePost } from '../components/CreatePost';
 import { ItemList } from '../components/ItemList';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
   const user = useSelector((state) => state.user.value);
   const dataCollectionRef = collection(db, 'posts');
   const bidCollectionRef = collection(db, 'items');
 
+  const navigate = useNavigate();
+
   const [userPosts, setUserPosts] = useState([]);
   const [myPosts, setMyPosts] = useState([]);
   const [myBids, setMyBids] = useState([]);
 
   useEffect(() => {
+    if (user.userId == '0') {
+      navigate('/signin');
+    }
+
     onSnapshot(dataCollectionRef, (snapshot) => {
       setUserPosts(snapshot.docs?.map((doc) => ({ ...doc.data(), id: doc.id })));
     });
