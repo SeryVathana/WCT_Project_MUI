@@ -6,7 +6,7 @@ import Tab from '@mui/joy/Tab';
 import TabList from '@mui/joy/TabList';
 import Tabs from '@mui/joy/Tabs';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { collection, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebaseConfig';

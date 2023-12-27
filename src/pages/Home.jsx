@@ -49,10 +49,10 @@ function Hero() {
             component='h1'
             level={'h1'}
             maxWidth={650}
-            fontSize={{ xs: 32, sm: 42, md: 56 }}
-            fontWeight={400}
+            fontSize={{ xs: 32, sm: 42, md: 52 }}
+            fontWeight={600}
             mt={8}
-            lineHeight={1.5}
+            lineHeight={1.2}
           >
             Your only place to Buy or Sell <Typography color='primary'>anything</Typography> you
             want.
