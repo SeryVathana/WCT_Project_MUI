@@ -231,6 +231,7 @@ export const CreatePost = () => {
               multiple
               placeholder='Categories'
               options={categoriesList}
+              sx={{ boxShadow: 'none' }}
               getOptionLabel={(option) => option.title}
               onChange={(e, newValue) => setCategories(newValue)}
               renderTags={(tags, getTagProps) => {

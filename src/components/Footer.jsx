@@ -1,8 +1,21 @@
 /* eslint-disable react/prop-types */
-import { Button, Divider, FormControl, FormHelperText, FormLabel, Grid, Input, Link, Stack, Typography } from '@mui/joy';
+import {
+  Button,
+  Divider,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Grid,
+  Input,
+  Link,
+  Stack,
+  Typography,
+} from '@mui/joy';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function Footer() {
+  const user = useSelector((state) => state.user.value);
   return (
     <Stack py={5}>
       <Divider />
@@ -15,7 +28,7 @@ export default function Footer() {
             <Typography level='body-sm' mb={3}>
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum, eligendi!
             </Typography>
-            <EmailSubscribe />
+            {user.userId == 0 && <EmailSubscribe />}
           </Stack>
         </Grid>
         <LinkContainer title='Site Map' data={links} />
@@ -66,14 +79,28 @@ function EmailSubscribe() {
           onChange={(event) => setData({ email: event.target.value, status: 'initial' })}
           error={data.status === 'failure'}
           endDecorator={
-            <Button variant='solid' color='primary' loading={data.status === 'loading'} type='submit' sx={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}>
+            <Button
+              variant='solid'
+              color='primary'
+              loading={data.status === 'loading'}
+              type='submit'
+              sx={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+            >
               Subscribe
             </Button>
           }
         />
-        {data.status === 'failure' && <FormHelperText sx={(theme) => ({ color: theme.vars.palette.danger[400] })}>Oops! something went wrong, please try again later.</FormHelperText>}
+        {data.status === 'failure' && (
+          <FormHelperText sx={(theme) => ({ color: theme.vars.palette.danger[400] })}>
+            Oops! something went wrong, please try again later.
+          </FormHelperText>
+        )}
 
-        {data.status === 'sent' && <FormHelperText sx={(theme) => ({ color: theme.vars.palette.primary[400] })}>You are all set!</FormHelperText>}
+        {data.status === 'sent' && (
+          <FormHelperText sx={(theme) => ({ color: theme.vars.palette.primary[400] })}>
+            You are all set!
+          </FormHelperText>
+        )}
       </FormControl>
     </form>
   );
@@ -110,7 +137,11 @@ function LinkContainer({ title = 'Untitled', data }) {
         <Stack gap={1}>
           {data.map((link) => {
             return (
-              <Link key={Math.random() * Math.random() + Math.random()} color='neutral' href={link.url}>
+              <Link
+                key={Math.random() * Math.random() + Math.random()}
+                color='neutral'
+                href={link.url}
+              >
                 {link.title}
               </Link>
             );

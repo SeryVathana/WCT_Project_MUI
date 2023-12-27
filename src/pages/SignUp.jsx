@@ -1,12 +1,13 @@
-import { Box, Button, Checkbox, Grid, Input, Option, Select, Stack, Typography } from '@mui/joy';
+import { Box, Button, Checkbox, FormHelperText, Grid, Input, Stack, Typography } from '@mui/joy';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { collection } from 'firebase/firestore';
-import { addDoc } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebaseConfig';
-import { Link } from 'react-router-dom';
 
 export default function SignUp() {
+  const navigate = useNavigate();
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -14,12 +15,60 @@ export default function SignUp() {
   const [phoneNum, setPhoneNum] = useState('');
   const [birthDate, setBirthDate] = useState('');
 
+  const [firstNameError, setFirstNameError] = useState(false);
+  const [lastNameError, setLastNameError] = useState(false);
+  const [inUseEmail, setInUsedEmail] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+  const [birthDateError, setBirthDateError] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   const handleSubmitData = async (e) => {
     e.preventDefault();
+
+    if (Number(firstName)) {
+      setFirstNameError(true);
+      return;
+    } else {
+      firstName.split('').map((each) => {
+        if (Number(each)) {
+          setFirstNameError(true);
+          return;
+        } else {
+          setFirstNameError(false);
+        }
+      });
+    }
+
+    if (Number(lastName)) {
+      setLastNameError(true);
+      return;
+    } else {
+      lastName.split('').map((each) => {
+        if (Number(each)) {
+          setLastNameError(true);
+          return;
+        } else {
+          setLastNameError(false);
+        }
+      });
+    }
+
+    if (!Number(phoneNum)) {
+      setPhoneError(true);
+      return;
+    } else {
+      setPhoneError(false);
+    }
+
+    if (Number(birthDate.split('-')[0]) > 2024 - 19) {
+      setBirthDateError(true);
+      return;
+    } else {
+      setBirthDateError(false);
+    }
 
     const userData = {
       firstName,
@@ -29,17 +78,20 @@ export default function SignUp() {
       phoneNum,
       role: 'user',
       biddingHistory: [],
-      //   birthDate: new Timestamp(Math.floor(new Date(birthDate).getTime() / 1000), Math.floor(new Date(birthDate).getTime() / 1000000)),
+      birthDate,
     };
 
     createUserWithEmailAndPassword(auth, email, password)
       .then(() => {
+        setInUsedEmail(false);
         const colRef = collection(db, 'users');
         addDoc(colRef, userData).then(() => {
-          console.log('Completed');
+          navigate('/');
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setInUsedEmail(err.code == 'auth/email-already-in-use');
+      });
   };
 
   return (
@@ -57,18 +109,30 @@ export default function SignUp() {
             <h6>First Name</h6>
             <Input
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => {
+                setFirstName(e.target.value);
+              }}
               required
+              type='text'
               placeholder='Enter Your First name'
               variant='outlined'
               color='neutral'
               size='md'
               sx={{ boxShadow: 'none' }}
+              pattern='[A-Za-z]'
             />
+            {firstNameError && (
+              <>
+                <FormHelperText>
+                  <Typography color='danger'>Invalid first name.</Typography>
+                </FormHelperText>
+              </>
+            )}
           </Grid>
           <Grid xs={12} sm={6}>
             <h6>Last Name</h6>
             <Input
+              type='text'
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
@@ -78,6 +142,11 @@ export default function SignUp() {
               size='md'
               sx={{ boxShadow: 'none' }}
             />
+            {lastNameError && (
+              <FormHelperText>
+                <Typography color='danger'>Invalid last name.</Typography>
+              </FormHelperText>
+            )}
           </Grid>
         </Grid>
 
@@ -94,6 +163,11 @@ export default function SignUp() {
             size='md'
             sx={{ boxShadow: 'none' }}
           />
+          {inUseEmail && (
+            <FormHelperText>
+              <Typography color='danger'>This email already in use.</Typography>
+            </FormHelperText>
+          )}
         </Box>
 
         <Box>
@@ -117,21 +191,26 @@ export default function SignUp() {
             onChange={(e) => setPhoneNum(e.target.value)}
             required
             placeholder='Phone number'
-            startDecorator={
-              <Select
-                variant='plain'
-                defaultValue={'+855'}
-                sx={{ '&:hover': { bgcolor: 'transparent' } }}
-              >
-                <Option value='+855'>+855</Option>
-                <Option value='+168'>+168</Option>
-                <Option value='+999'>+999</Option>
-              </Select>
-            }
+            // startDecorator={
+            //   <Select
+            //     variant='plain'
+            //     defaultValue={'+855'}
+            //     sx={{ '&:hover': { bgcolor: 'transparent' } }}
+            //   >
+            //     <Option value='+855'>+855</Option>
+            //     <Option value='+168'>+168</Option>
+            //     <Option value='+999'>+999</Option>
+            //   </Select>
+            // }
             color='neutral'
             size='md'
-            sx={{ boxShadow: 'none', pl: 0 }}
+            sx={{ boxShadow: 'none' }}
           />
+          {phoneError && (
+            <FormHelperText>
+              <Typography color='danger'>Invalid Phone number.</Typography>
+            </FormHelperText>
+          )}
         </Box>
 
         <Stack>
@@ -143,13 +222,18 @@ export default function SignUp() {
             type='date'
             slotProps={{
               input: {
-                max: '2005-12-31',
+                max: `${2024 - 19}-12-31`,
               },
             }}
             color='neutral'
             size='md'
             sx={{ boxShadow: 'none' }}
           />
+          {birthDateError && (
+            <FormHelperText>
+              <Typography color='danger'>Invalid or User must be 18 or above.</Typography>
+            </FormHelperText>
+          )}
         </Stack>
 
         <Stack gap={2}>

@@ -6,23 +6,35 @@ import Tab from '@mui/joy/Tab';
 import TabList from '@mui/joy/TabList';
 import Tabs from '@mui/joy/Tabs';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { collection, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
 
+import { onAuthStateChanged } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 import { BidList } from '../components/BidList';
 import { CreatePost } from '../components/CreatePost';
 import { ItemList } from '../components/ItemList';
 
 function Dashboard() {
   const user = useSelector((state) => state.user.value);
+  const navigate = useNavigate();
+
   const dataCollectionRef = collection(db, 'posts');
   const bidCollectionRef = collection(db, 'items');
 
   const [userPosts, setUserPosts] = useState([]);
   const [myPosts, setMyPosts] = useState([]);
   const [myBids, setMyBids] = useState([]);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        navigate('/');
+      }
+    });
+  }, []);
 
   useEffect(() => {
     onSnapshot(dataCollectionRef, (snapshot) => {

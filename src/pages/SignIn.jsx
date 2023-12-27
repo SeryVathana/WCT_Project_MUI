@@ -52,7 +52,6 @@ export default function SignIn() {
 
             navigate('/');
             dispatch(setUser(user));
-            window.location.reload(false);
           })
         );
       })

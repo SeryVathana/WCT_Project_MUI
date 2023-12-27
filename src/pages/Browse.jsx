@@ -2,6 +2,7 @@
 
 /* eslint-disable react/prop-types */
 import {
+  Box,
   Button,
   FormControl,
   FormLabel,
@@ -63,6 +64,7 @@ export default function Browse() {
       const filterdData = backUpData.filter((item) =>
         item?.itemCategories?.includes(inputCategory)
       );
+      console.log(filterdData.length);
       setData(filterdData);
     } else {
       setData(backUpData);
@@ -102,52 +104,56 @@ export default function Browse() {
         alignItems={{ xs: 'start', sm: 'end', md: 'center' }}
         sx={{ overflowX: 'hidden', overflowY: 'hidden' }}
       >
-        <Stack direction={'row'} gap={1}>
-          <IconButton
-            variant='plain'
-            size='sm'
-            color='neutral'
-            disabled={currentPage === 1}
-            sx={{
-              userSelect: 'none',
-              fontSize: { xs: '12px', sm: 'inherit' },
-              padding: { xs: '5px 10px', sm: 'auto' },
-            }}
-            onClick={() => setCurrentPage(currentPage - 1)}
-          >
-            <IoIosArrowBack />
-          </IconButton>
-          {Array.from({ length: totalPages }).map((_, index) => (
-            <Button
-              variant={index + 1 === currentPage ? 'solid' : 'plain'}
+        {data.length > 0 ? (
+          <Stack direction={'row'} gap={1}>
+            <IconButton
+              variant='plain'
               size='sm'
               color='neutral'
-              key={index}
+              disabled={currentPage === 1}
               sx={{
                 userSelect: 'none',
                 fontSize: { xs: '12px', sm: 'inherit' },
                 padding: { xs: '5px 10px', sm: 'auto' },
               }}
-              onClick={() => handlePageChange(index + 1)}
+              onClick={() => setCurrentPage(currentPage - 1)}
             >
-              {index + 1}
-            </Button>
-          ))}
-          <IconButton
-            variant='plain'
-            size='sm'
-            color='neutral'
-            disabled={currentPage === totalPages}
-            sx={{
-              userSelect: 'none',
-              fontSize: { xs: '12px', sm: 'inherit' },
-              padding: { xs: '5px 10px', sm: 'auto' },
-            }}
-            onClick={() => setCurrentPage(currentPage + 1)}
-          >
-            <IoIosArrowForward />
-          </IconButton>
-        </Stack>
+              <IoIosArrowBack />
+            </IconButton>
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <Button
+                variant={index + 1 === currentPage ? 'solid' : 'plain'}
+                size='sm'
+                color='neutral'
+                key={index}
+                sx={{
+                  userSelect: 'none',
+                  fontSize: { xs: '12px', sm: 'inherit' },
+                  padding: { xs: '5px 10px', sm: 'auto' },
+                }}
+                onClick={() => handlePageChange(index + 1)}
+              >
+                {index + 1}
+              </Button>
+            ))}
+            <IconButton
+              variant='plain'
+              size='sm'
+              color='neutral'
+              disabled={currentPage === totalPages}
+              sx={{
+                userSelect: 'none',
+                fontSize: { xs: '12px', sm: 'inherit' },
+                padding: { xs: '5px 10px', sm: 'auto' },
+              }}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              <IoIosArrowForward />
+            </IconButton>
+          </Stack>
+        ) : (
+          <Box />
+        )}
         <Stack direction={{ xs: 'row', md: 'row' }} gap={{ xs: 1, md: 5 }}>
           <FormControl>
             <Stack
@@ -211,8 +217,12 @@ export default function Browse() {
           </FormControl>
         </Stack>
       </Stack>
-      <BigCardContainer currentItems={currentItems} />
-      <Stack direction={'row'} gap={1} mt={2}>
+      {data.length > 0 ? (
+        <BigCardContainer currentItems={currentItems} />
+      ) : (
+        <Typography>No item found</Typography>
+      )}
+      {/* <Stack direction={'row'} gap={1} mt={2}>
         <IconButton
           variant='plain'
           size='sm'
@@ -257,7 +267,7 @@ export default function Browse() {
         >
           <IoIosArrowForward />
         </IconButton>
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 }
